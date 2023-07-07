@@ -11,9 +11,9 @@ Kotlin
 
 ## Mentors
 [Renato Turić](https://github.com/Aksi0m)  
-[Mark Frelih](https://github.com/KCeh)  
+[Mark Frelih](https://github.com/Kuglll)  
 [Ivan Toshev](https://github.com/ToshevIvan)  
-[Karlo Čeh](https://github.com/Kuglll)
+[Karlo Čeh](https://github.com/KCeh)
 
 ## License
 
