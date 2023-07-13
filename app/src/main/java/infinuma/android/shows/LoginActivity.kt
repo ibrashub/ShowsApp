@@ -25,21 +25,16 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         binding.loginButton.setOnClickListener {
 
             val intent = Intent(this, WelcomeActivity::class.java)
             val email = emailEditText.text.toString()
-
-            val username = email.substringBefore("@")
-            intent.putExtra("EMAIL_EXTRA", emailEditText.text.toString())
-            intent.putExtra("username", username)
+            intent.putExtra("email_full_form", emailEditText.text.toString())
             startActivity(intent)
         }
 
-
-        emailEditText = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.emailEditText)
-        passwordEditText = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.passwordEditText)
+        emailEditText = binding.emailEditText
+        passwordEditText = binding.passwordEditText
         updateLoginButtonState()
 
         emailEditText.addTextChangedListener(object : TextWatcher {
@@ -81,30 +76,14 @@ class LoginActivity : AppCompatActivity() {
 
         val isValidEmail = email.matches(Regex(regexPattern))
 
-        if (isValidEmail) {
-            // Email is valid, update UI if needed
-            emailEditText.error = null
-        } else {
-            // Email is invalid, show error message
-            emailEditText.error = "Invalid email"
-        }
-
-        // Update the Login button state based on email and password validity
+        emailEditText.error = if(isValidEmail) null else "Invalid Email"
         updateLoginButtonState()
     }
 
     private fun validatePassword(password: String) {
         val isValidPassword = password.length >= 6
 
-        if (isValidPassword) {
-            // Password is valid, update UI if needed
-            passwordEditText.error = null
-        } else {
-            // Password is invalid, show error message
-            passwordEditText.error = "Invalid password"
-        }
-
-        // Update the Login button state based on email and password validity
+        passwordEditText.error = if(isValidPassword) null else "Invalid password"
         updateLoginButtonState()
     }
 
@@ -124,67 +103,4 @@ class LoginActivity : AppCompatActivity() {
             loginButton.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("LoginActivity", "onStart called")
-    }
-    override fun onResume() {
-        super.onResume()
-        Log.d("LoginActivity", "onResume called")
-    }
-    override fun onPause() {
-        super.onPause()
-        Log.w("LoginActivity", "onPause called")
-    }
-    override fun onStop() {
-        super.onStop()
-        Log.w("LoginActivity", "onStop called")
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.w("LoginActivity", "onDestroy called")
-    }
-    override fun onRestart() {
-        super.onRestart()
-        Log.i("LoginActivity", "onRestart called")
-    }
 }
-/*
-Logcat logs:
-* 1. When the app is put on background and moved back to foreground:
-onPause
-onStop
-onRestart
-onStart
-onResume    are called.
-----------------
-* 2. When the app is killed:
-onPause
-onStop
-onDestroy   are called.
-----------------
-* 3. When the phone screen is locked and unlocked:
-onPause
-onStop
-onRestart
-onStart
-onResume    are called, similar to when it's put on background and moved back to foreground.
-----------------
-* When the app is first opened:
-onCreate
-onStart
-onResume    are called.
-----------------
-* When the app is reopened from the background:
-onRestart
-onStart
-onResume    are called.
-----------------
-* When the app is put on background:
-onPause
-onStop      are called.
-----------------
-* When the app is closed/killed from the background:
-onDestroy   is called.
-*/

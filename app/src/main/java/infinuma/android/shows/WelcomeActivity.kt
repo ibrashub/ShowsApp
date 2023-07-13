@@ -4,26 +4,25 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import infinuma.android.shows.databinding.ActivityWelcomeBinding
 
 class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
-        val intent = intent
-        val email = intent.getStringExtra("EMAIL_EXTRA")
-        val username = extractUsernameFromEmail(email ?: "")
-        val welcomeTextView = findViewById<TextView>(R.id.welcomeText)
-        welcomeTextView.text = getString(R.string.usernameWelcome, username)
 
+        // Instantiate the binding object
+        val binding = ActivityWelcomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        // Retrieve the email from the intent
+        val email = intent.getStringExtra("email_full_form")
+
+        // Extract the username from the email
+        val username = email?.substringBefore("@")
+
+        // Access the views using the binding object
+        binding.welcomeText.text = getString(R.string.usernameWelcome, username)
     }
 
-    private fun extractUsernameFromEmail(email: String): String {
-        val atIndex = email.indexOf('@')
-        if (atIndex != -1) {
-            return email.substring(0, atIndex)
-        }
-        return email
-    }
 
 }
