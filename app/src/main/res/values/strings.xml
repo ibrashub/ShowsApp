@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Shows</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="underLoginText">In order to continue please log in.</string>
+    <string name="loginTitle">Login</string>
+    <string name="welcomeText">Welcome</string>
+    <string name="usernameWelcome">Welcome, %1$s!</string>
+
 </resources>
