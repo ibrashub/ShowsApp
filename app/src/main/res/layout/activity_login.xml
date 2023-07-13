@@ -138,8 +138,6 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="150dp"
         android:text="@string/login"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/design_default_color_primary"
         app:layout_constraintTop_toTopOf="@id/passwordTextInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"

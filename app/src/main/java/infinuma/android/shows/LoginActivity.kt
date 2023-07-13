@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import infinuma.android.shows.databinding.ActivityLoginBinding
 
@@ -22,8 +23,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
-
-
         setContentView(binding.root)
 
 
@@ -31,18 +30,17 @@ class LoginActivity : AppCompatActivity() {
 
             val intent = Intent(this, WelcomeActivity::class.java)
             val email = emailEditText.text.toString()
+
             val username = email.substringBefore("@")
             intent.putExtra("EMAIL_EXTRA", emailEditText.text.toString())
             intent.putExtra("username", username)
             startActivity(intent)
         }
 
+
         emailEditText = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.emailEditText)
         passwordEditText = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.passwordEditText)
         updateLoginButtonState()
-
-
-
 
         emailEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -113,10 +111,20 @@ class LoginActivity : AppCompatActivity() {
     private fun updateLoginButtonState() {
         val isValidEmail = emailEditText.text?.isNotBlank() ?: false
         val isValidPassword = (passwordEditText.text?.length ?: 0) >= 6
-
         val loginButton = findViewById<Button>(R.id.loginButton)
-        loginButton.isEnabled = isValidEmail && isValidPassword
+
+
+        if (isValidEmail && isValidPassword) {
+            loginButton.isEnabled = true
+            loginButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
+            loginButton.setTextColor(ContextCompat.getColor(this, R.color.purple_background))
+        } else {
+            loginButton.isEnabled = false
+            loginButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.disabled_button_color)
+            loginButton.setTextColor(ContextCompat.getColor(this, R.color.white))
+        }
     }
+
     override fun onStart() {
         super.onStart()
         Log.d("LoginActivity", "onStart called")
