@@ -76,14 +76,14 @@ class LoginActivity : AppCompatActivity() {
 
         val isValidEmail = email.matches(Regex(regexPattern))
 
-        emailEditText.error = if(isValidEmail) null else "Invalid Email"
+        emailEditText.error = if (isValidEmail) null else "Invalid Email"
         updateLoginButtonState()
     }
 
     private fun validatePassword(password: String) {
         val isValidPassword = password.length >= 6
 
-        passwordEditText.error = if(isValidPassword) null else "Invalid password"
+        passwordEditText.error = if (isValidPassword) null else "Invalid password"
         updateLoginButtonState()
     }
 
