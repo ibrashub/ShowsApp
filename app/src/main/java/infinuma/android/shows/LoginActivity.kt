@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import infinuma.android.shows.databinding.ActivityLoginBinding
+import infinuma.android.shows.ui.login.ShowsActivity
 
 //Scroll down for activity lifecycle logs observed from Logcat.
 

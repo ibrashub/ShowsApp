@@ -16,7 +16,7 @@
             android:name=".ItemReviewActivity"
             android:exported="false"/>
         <activity
-            android:name=".ShowsActivity"
+            android:name=".ui.login.ShowsActivity"
             android:exported="false"/>
         <activity
             android:name=".LoginActivity"
