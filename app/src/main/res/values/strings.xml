@@ -7,5 +7,7 @@
     <string name="loginTitle">Login</string>
     <string name="welcomeText">Welcome</string>
     <string name="usernameWelcome">Welcome, %1$s!</string>
+    <string name="fab_content_desc">👁</string>
+    <string name="noShowsText">Your shows are not showing. Get it?</string>
 
 </resources>
