@@ -26,9 +26,9 @@ class ShowsAdapter(
     inner class ShowsViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Show) {
-            binding.showImage.setImageResource(item.imageResourceId)
             binding.showName.text = item.name
-            //binding.showDescription.text = item.description
+            binding.showImage.setImageResource(item.imageResourceId)
+            binding.showDescription.text = item.description
             binding.root.setOnClickListener {
                 onItemClickCallback(item)
             }

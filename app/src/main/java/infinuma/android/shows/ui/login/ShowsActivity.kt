@@ -18,7 +18,7 @@ class ShowsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityShowsBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_shows)
+        setContentView(binding.root)
 
         initShowsRecycler()
 
