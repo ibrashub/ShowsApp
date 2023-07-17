@@ -25,6 +25,16 @@ class ShowsAdapter(
 
     inner class ShowsViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val show = items[position]
+                    onItemClickCallback(show)
+                }
+            }
+        }
+
         fun bind(item: Show) {
             binding.showName.text = item.name
             binding.showImage.setImageResource(item.imageResourceId)

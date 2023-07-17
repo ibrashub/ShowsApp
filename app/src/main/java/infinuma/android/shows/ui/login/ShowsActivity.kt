@@ -1,5 +1,6 @@
 package infinuma.android.shows.ui.login
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import infinuma.android.shows.ShowDetailsActivity
 import infinuma.android.shows.data.model.shows
 import infinuma.android.shows.databinding.ActivityShowsBinding
 
@@ -53,7 +55,12 @@ class ShowsActivity : AppCompatActivity() {
 
     private fun initShowsRecycler() {
         adapter = ShowsAdapter(shows) { show ->
-            Toast.makeText(this, show.name, Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ShowDetailsActivity::class.java)
+            intent.putExtra("showId", show.id)
+            intent.putExtra("showName", show.name)
+            intent.putExtra("showDescription", show.description)
+            intent.putExtra("showImage", show.imageResourceId)
+            startActivity(intent)
         }
         binding.showsRecycler.layoutManager = LinearLayoutManager(this)
 

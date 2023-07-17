@@ -9,5 +9,11 @@
     <string name="usernameWelcome">Welcome, %1$s!</string>
     <string name="fab_content_desc">👁</string>
     <string name="noShowsText">Your shows are not showing. Get it?</string>
+    <string name="back_button">back button</string>
+    <string name="show_name">Show name</string>
+    <string name="write_a_review">Write a review</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="reviews">Reviews</string>
 
 </resources>
