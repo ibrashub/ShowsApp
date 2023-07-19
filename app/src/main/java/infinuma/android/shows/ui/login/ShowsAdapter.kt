@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.model.Show
 import infinuma.android.shows.data.model.shows
-import infinuma.android.shows.databinding.ItemReviewBinding
+import infinuma.android.shows.databinding.ItemShowBinding
 
 class ShowsAdapter(
     private var items: List<Show>,
@@ -13,7 +13,7 @@ class ShowsAdapter(
 ) : RecyclerView.Adapter<ShowsAdapter.ShowsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowsViewHolder {
-        val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context))
         return ShowsViewHolder(binding)
     }
 
@@ -23,7 +23,7 @@ class ShowsAdapter(
         holder.bind(items[position])
     }
 
-    inner class ShowsViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShowsViewHolder(private val binding: ItemShowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.root.setOnClickListener {
