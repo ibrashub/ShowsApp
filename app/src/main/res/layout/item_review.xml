@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.Shows">
 
     <ImageView
         android:id="@+id/userImage"
@@ -21,11 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:textColor="@color/purple_700"
+        android:textColor="?attr/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/userImage"
         app:layout_constraintBottom_toBottomOf="@id/userImage"
+        app:layout_constraintStart_toEndOf="@id/userImage"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="User12313542"/>
 
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
-        android:textColor="@color/purple_700"
+        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         android:text="3"
         app:layout_constraintEnd_toStartOf="@id/starIcon"
@@ -47,8 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_star"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/starAmount"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/starAmount"/>
 
     <TextView
@@ -56,9 +57,8 @@
         style="@style/MaterialAlertDialog.Material3.Body.Text.CenterStacked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
         android:layout_marginTop="0dp"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="16sp"
         android:padding="4dp"
         android:textStyle="bold"

@@ -85,9 +85,8 @@ class ShowDetailsActivity : AppCompatActivity() {
 
         val (totalRatings, averageRating) = calculateAverageRating(reviews)
 
-        val formattedText = "%d ratings, %.2f average".format(totalRatings, averageRating)
+        binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
 
-        binding.ratingTextView.text = formattedText
 
         binding.averageRatingBar.rating = averageRating
 
@@ -108,7 +107,7 @@ class ShowDetailsActivity : AppCompatActivity() {
             totalRating += review.rating
         }
 
-        val averageRating = totalRating.toFloat() / reviews.size
+        val averageRating = reviews.sumOf { it.rating }.toFloat() / reviews.size
         return Pair(reviews.size, averageRating)
     }
 
