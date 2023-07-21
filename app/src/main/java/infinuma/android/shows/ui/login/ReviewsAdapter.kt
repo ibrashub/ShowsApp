@@ -12,7 +12,7 @@ class ReviewsAdapter(
 ) : RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
-        val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ReviewViewHolder(binding)
     }
 
@@ -31,7 +31,7 @@ class ReviewsAdapter(
 
         fun bind(item: Review) {
             binding.username.text = item.name
-            binding.starIcon.setImageResource(item.imageResourceId)
+            binding.userImage.setImageResource(item.imageResourceId)
             binding.userComment.text = item.comment
 
         }
