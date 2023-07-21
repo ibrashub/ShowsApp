@@ -10,14 +10,13 @@ import android.widget.Button
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import infinuma.android.shows.databinding.ActivityLoginBinding
+import infinuma.android.shows.ui.login.ShowsActivity
 
 //Scroll down for activity lifecycle logs observed from Logcat.
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var emailEditText: TextInputEditText
-    private lateinit var passwordEditText: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,17 +26,13 @@ class LoginActivity : AppCompatActivity() {
 
         binding.loginButton.setOnClickListener {
 
-            val intent = Intent(this, WelcomeActivity::class.java)
-            val email = emailEditText.text.toString()
-            intent.putExtra("email_full_form", emailEditText.text.toString())
+            val intent = Intent(this, ShowsActivity::class.java)
             startActivity(intent)
         }
 
-        emailEditText = binding.emailEditText
-        passwordEditText = binding.passwordEditText
         updateLoginButtonState()
 
-        emailEditText.addTextChangedListener(object : TextWatcher {
+        binding.emailEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // No action needed before text changed
             }
@@ -52,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-        passwordEditText.addTextChangedListener(object : TextWatcher {
+        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // No action needed before text changed
             }
@@ -67,7 +62,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-        Log.d("LoginActivity", "onCreate called")
     }
 
     private fun validateEmail(email: String) {
@@ -76,20 +70,20 @@ class LoginActivity : AppCompatActivity() {
 
         val isValidEmail = email.matches(Regex(regexPattern))
 
-        emailEditText.error = if (isValidEmail) null else "Invalid Email"
+        binding.emailEditText.error = if (isValidEmail) null else "Invalid Email"
         updateLoginButtonState()
     }
 
     private fun validatePassword(password: String) {
         val isValidPassword = password.length >= 6
 
-        passwordEditText.error = if (isValidPassword) null else "Invalid password"
+        binding.passwordEditText.error = if (isValidPassword) null else "Invalid password"
         updateLoginButtonState()
     }
 
     private fun updateLoginButtonState() {
-        val isValidEmail = emailEditText.text?.isNotBlank() ?: false
-        val isValidPassword = (passwordEditText.text?.length ?: 0) >= 6
+        val isValidEmail = binding.emailEditText.text?.isNotBlank() ?: false
+        val isValidPassword = (binding.passwordEditText.text?.length ?: 0) >= 6
         val loginButton = findViewById<Button>(R.id.loginButton)
 
 
