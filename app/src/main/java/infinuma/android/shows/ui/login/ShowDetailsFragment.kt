@@ -1,12 +1,14 @@
 package infinuma.android.shows.ui.login
 
-import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +48,10 @@ class ShowDetailsFragment : Fragment() {
         }
 
         initReviewsRecycler()
-        initAddReview()
+
+        binding.backButton.setOnClickListener {
+            findNavController().navigate(R.id.showsFragment)
+        }
 
 
         binding.reviewButton.setOnClickListener {
@@ -58,13 +63,7 @@ class ShowDetailsFragment : Fragment() {
         val showImage = arguments?.getInt("showImage") ?: 0
         binding.toolbar.title = showName
 
-        //val showName = requireActivity().intent.getStringExtra("showName")
-        //val showDescription = requireActivity().intent.getStringExtra("showDescription")
-        //val showImage = requireActivity().intent.getIntExtra("showImage", 0)
-
         populateShowDetails(showDescription, showImage)
-
-        //        requireActivity().supportActionBar?.title = showName
     }
 
     private fun populateShowDetails(description: String?, imageResourceId: Int) {
@@ -75,7 +74,12 @@ class ShowDetailsFragment : Fragment() {
     private fun showBottomSheetDialog() {
         val dialog = BottomSheetDialog(requireContext())
         val binding = DialogAddReviewBinding.inflate(layoutInflater)
+
         dialog.setContentView(binding.root)
+
+        binding.cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
 
         binding.submitButton.setOnClickListener {
             val rating = binding.ratingBar.rating.toInt()
@@ -85,7 +89,7 @@ class ShowDetailsFragment : Fragment() {
                 _rating = rating
                 _comment = comment
                 addNewReviewToList(rating, comment)
-                dialog.dismiss()
+
             } else {
                 Toast.makeText(requireContext(), "Please provide a rating.", Toast.LENGTH_SHORT).show()
             }
@@ -94,22 +98,15 @@ class ShowDetailsFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun initReviewsRecycler() {
         adapter = ReviewsAdapter(reviews) { review ->
-            //            val intent = Intent(requireContext(), initReviewsRecycler()::class.java)
-            ////            val reviewId = arguments?.getString("reviewId")
-            ////            val reviewRating = arguments?.getInt("reviewRating", 5)
-            ////            val reviewName = arguments?.getString("reviewName")
-            ////            val reviewName = arguments?.getString("reviewName")
-            ////            val reviewName = arguments?.getString("reviewName")
-            //
-            //            intent.putExtra("reviewId", review.id)
-            //            intent.putExtra("reviewRating", review.rating)
-            //            intent.putExtra("reviewName", review.name)
-            //            intent.putExtra("reviewComment", review.comment)
-            //            intent.putExtra("reviewImage", review.imageResourceId)
-            //            startActivity(intent)
+            val intent = Intent(requireContext(), initReviewsRecycler()::class.java)
+            intent.putExtra("reviewId", review.id)
+            intent.putExtra("reviewRating", review.rating)
+            intent.putExtra("reviewName", review.name)
+            intent.putExtra("reviewComment", review.comment)
+            intent.putExtra("reviewImage", review.imageResourceId)
+            startActivity(intent)
         }
         binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.reviewsRecycler.adapter = adapter
@@ -139,18 +136,14 @@ class ShowDetailsFragment : Fragment() {
         return Pair(reviews.size, averageRating)
     }
 
-    private fun initAddReview() {
-        binding.reviewButton.setOnClickListener {
-            val review = Review(reviews.size + 1, _rating, "username", _comment, R.drawable.ic_profile_placeholder)
-
-        }
-    }
-
     private fun addNewReviewToList(rating: Int, comment: String) {
         val review = Review(reviews.size + 1, rating, "username", comment, R.drawable.ic_profile_placeholder)
 
         adapter.addItem(review)
         adapter.notifyDataSetChanged()
+        val (totalRatings, averageRating) = calculateAverageRating(reviews)
+        binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
+        binding.averageRatingBar.rating = averageRating
     }
 
 }

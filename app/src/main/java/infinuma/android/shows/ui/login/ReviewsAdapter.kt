@@ -24,7 +24,9 @@ class ReviewsAdapter(
     }
 
     fun addItem(review: Review) {
-        reviewsList = reviewsList.toMutableList().apply { add(review) }
+        reviewsList = reviewsList.toMutableList().apply {
+            add(review)
+        }
         notifyDataSetChanged()
     }
 
@@ -34,6 +36,7 @@ class ReviewsAdapter(
             binding.username.text = item.name
             binding.userImage.setImageResource(item.imageResourceId)
             binding.userComment.text = item.comment
+            binding.starAmount.text = item.rating.toString()
 
         }
     }
