@@ -7,6 +7,12 @@
         <item name="backgroundTint">@color/white</item>
     </style>
 
+    <style name="SubmitButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/RoundedButtonShapeAppearance</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="backgroundTint">@color/purple_background</item>
+    </style>
+
     <style name="RoundedButtonShapeAppearance">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>

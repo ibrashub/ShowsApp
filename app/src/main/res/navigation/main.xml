@@ -26,6 +26,22 @@
         android:id="@+id/showDetailsFragment"
         android:name="infinuma.android.shows.ui.login.ShowDetailsFragment"
         tools:layout="@layout/fragment_show_details">
+        <argument
+            android:name="showName"
+            app:argType="string"
+            android:defaultValue="Name" />
+        <argument
+            android:name="showId"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <argument
+            android:name="showDescription"
+            app:argType="string"
+            android:defaultValue="Description" />
+        <argument
+            android:name="showImage"
+            app:argType="integer"
+            android:defaultValue="0" />
 
         <!--        <action-->
         <!--            android:id="@+id/to_fragment_shows"-->

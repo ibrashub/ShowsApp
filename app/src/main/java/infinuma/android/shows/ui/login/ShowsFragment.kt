@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import infinuma.android.shows.R
 import infinuma.android.shows.data.model.shows
-import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 import infinuma.android.shows.databinding.FragmentShowsBinding
 
 class ShowsFragment : Fragment(R.layout.fragment_shows) {
@@ -54,18 +53,20 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                 FragmentManager.POP_BACK_STACK_INCLUSIVE
             )
         }
+
     }
 
 
 
     private fun initShowsRecycler() {
         adapter = ShowsAdapter(shows) { show ->
-            val intent = Intent(requireContext(), ShowDetailsFragment::class.java)
-            intent.putExtra("showId", show.id)
-            intent.putExtra("showName", show.name)
-            intent.putExtra("showDescription", show.description)
-            intent.putExtra("showImage", show.imageResourceId)
-            findNavController().navigate(R.id.showDetailsFragment)
+            val destination = ShowsFragmentDirections.actionShowsFragmentToShowDetailsFragment(
+                showId = show.id,
+                showName = show.name,
+                showDescription = show.description,
+                showImage = show.imageResourceId
+            )
+            findNavController().navigate(destination)
         }
         binding.showsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.showsRecycler.adapter = adapter
