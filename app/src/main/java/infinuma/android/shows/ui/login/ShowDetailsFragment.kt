@@ -1,33 +1,43 @@
-package infinuma.android.shows
+package infinuma.android.shows.ui.login
 
+import android.app.AlertDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import infinuma.android.shows.R
 import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.data.model.reviews
-import infinuma.android.shows.databinding.ActivityShowDetailsBinding
-import infinuma.android.shows.ui.login.ReviewsAdapter
+import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 
-class ShowDetailsActivity : AppCompatActivity() {
+class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
 
-    private lateinit var binding: ActivityShowDetailsBinding
+    private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        binding = ActivityShowDetailsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    private val binding get() = _binding!!
 
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        binding.toolbar.setNavigationOnClickListener {
+//            requireActivity().onBackPressed()
+//        }
 
         initReviewsRecycler()
 
@@ -37,14 +47,12 @@ class ShowDetailsActivity : AppCompatActivity() {
             showAlertDialog()
         }
 
-        val showName = intent.getStringExtra("showName")
-        val showDescription = intent.getStringExtra("showDescription")
-        val showImage = intent.getIntExtra("showImage", 0)
+        val showName = requireActivity().intent.getStringExtra("showName")
+        val showDescription = requireActivity().intent.getStringExtra("showDescription")
+        val showImage = requireActivity().intent.getIntExtra("showImage", 0)
 
         populateShowDetails(showDescription, showImage)
-        supportActionBar?.title = showName
-
-
+        binding.toolbar.title = showName
     }
 
     private fun populateShowDetails(description: String?, imageResourceId: Int) {
@@ -53,7 +61,7 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun showAlertDialog() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(requireContext())
         builder
             .setTitle((R.string.app_name))
             .setMessage("Are you sure you want to add a new review?")
@@ -67,9 +75,11 @@ class ShowDetailsActivity : AppCompatActivity() {
         builder.show()
     }
 
+
+
     private fun initReviewsRecycler() {
         adapter = ReviewsAdapter(reviews) { review ->
-            val intent = Intent(this, ShowDetailsActivity::class.java)
+            val intent = Intent(requireContext(), ShowDetailsFragment::class.java)
             intent.putExtra("reviewId", review.id)
             intent.putExtra("reviewRating", review.rating)
             intent.putExtra("reviewName", review.name)
@@ -77,20 +87,19 @@ class ShowDetailsActivity : AppCompatActivity() {
             intent.putExtra("reviewImage", review.imageResourceId)
             startActivity(intent)
         }
-        binding.reviewsRecycler.layoutManager = LinearLayoutManager(this)
-
+        binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.reviewsRecycler.adapter = adapter
+        binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
-        binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.reviewsRecycler.adapter = ReviewsAdapter(reviews) { review ->
+
+            findNavController().navigate(R.id.reviewsRecycler)
+        }
 
         val (totalRatings, averageRating) = calculateAverageRating(reviews)
 
         binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
-
-
         binding.averageRatingBar.rating = averageRating
-
-
     }
 
     private fun calculateAverageRating(reviews: List<Review>): Pair<Int, Float> {
@@ -112,7 +121,6 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun initAddReview() {
-
         binding.reviewButton.setOnClickListener {
             addNewReviewToList(Review(7, 5, "username", "comment", R.drawable.ic_profile_placeholder))
         }
@@ -120,10 +128,5 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun addNewReviewToList(item: Review) {
         adapter.addItem(item)
-        //        adapter.notifyItemInserted(reviews.size)
-        //        calculateAverageRating(reviews)
     }
-
 }
-
-

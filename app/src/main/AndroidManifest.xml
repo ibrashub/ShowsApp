@@ -13,13 +13,22 @@
         android:theme="@style/Theme.Shows"
         tools:targetApi="31">
         <activity
-            android:name=".ShowDetailsActivity"
+            android:name=".navigation_component.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.login.ShowDetailsFragment"
             android:exported="false"/>
         <activity
-            android:name=".ui.login.ShowsActivity"
+            android:name=".ui.login.ShowsFragment"
             android:exported="true"/>
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginFragment"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
