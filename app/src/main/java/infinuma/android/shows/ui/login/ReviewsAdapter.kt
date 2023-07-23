@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.model.Review
+import infinuma.android.shows.data.model.reviews
 import infinuma.android.shows.databinding.ItemReviewBinding
 
 class ReviewsAdapter(
-    private var items: List<Review>,
+    private var reviewsList: List<Review>,
     private val onItemClickCallback: (Review) -> Unit
 ) : RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
@@ -16,15 +17,17 @@ class ReviewsAdapter(
         return ReviewViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = items.count()
+    override fun getItemCount(): Int = reviewsList.count()
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(reviewsList[position])
     }
 
     fun addItem(review: Review) {
-        items = items + review
-        notifyItemInserted(items.lastIndex)
+        reviewsList = reviewsList.toMutableList().apply {
+            add(review)
+        }
+        notifyDataSetChanged()
     }
 
     inner class ReviewViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -33,6 +36,7 @@ class ReviewsAdapter(
             binding.username.text = item.name
             binding.userImage.setImageResource(item.imageResourceId)
             binding.userComment.text = item.comment
+            binding.starAmount.text = item.rating.toString()
 
         }
     }

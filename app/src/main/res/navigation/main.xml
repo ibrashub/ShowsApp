@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/verificationNavGraph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="infinuma.android.shows.ui.login.LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action android:id="@+id/action_loginFragment_to_showsFragment"
+            app:destination="@id/showsFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/showsFragment"
+        android:name="infinuma.android.shows.ui.login.ShowsFragment"
+        tools:layout="@layout/fragment_shows">
+
+        <action android:id="@+id/action_showsFragment_to_showDetailsFragment"
+            app:destination="@id/showDetailsFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/showDetailsFragment"
+        android:name="infinuma.android.shows.ui.login.ShowDetailsFragment"
+        tools:layout="@layout/fragment_show_details">
+        <argument
+            android:name="showId"
+            android:defaultValue="1"
+            app:argType="integer"/>
+        <argument
+            android:name="showName"
+            android:defaultValue="Name"
+            app:argType="string"/>
+        <argument
+            android:name="showDescription"
+            android:defaultValue="Description"
+            app:argType="string"/>
+        <argument
+            android:name="showImage"
+            android:defaultValue="0"
+            app:argType="integer"/>
+    </fragment>
+
+</navigation>

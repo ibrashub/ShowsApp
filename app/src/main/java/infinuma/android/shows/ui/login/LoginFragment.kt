@@ -1,71 +1,68 @@
-package infinuma.android.shows
+package infinuma.android.shows.ui.login
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.Button
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import com.google.android.material.textfield.TextInputEditText
-import infinuma.android.shows.databinding.ActivityLoginBinding
-import infinuma.android.shows.ui.login.ShowsActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import infinuma.android.shows.R
+import infinuma.android.shows.databinding.FragmentLoginBinding
 
-//Scroll down for activity lifecycle logs observed from Logcat.
+class LoginFragment : Fragment(R.layout.fragment_login) {
 
-class LoginActivity : AppCompatActivity() {
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var binding: ActivityLoginBinding
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    }
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.loginButton.setOnClickListener {
-
-            val intent = Intent(this, ShowsActivity::class.java)
-            startActivity(intent)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         updateLoginButtonState()
 
         binding.emailEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No action needed before text changed
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Perform validation after text changed
                 validateEmail(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // No action needed after text changed
+
             }
+
         })
 
         binding.passwordEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No action needed before text changed
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Perform validation after text changed
                 validatePassword(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // No action needed after text changed
             }
         })
 
     }
 
+    private fun initListeners() {
+        binding.loginButton.setOnClickListener {
+            findNavController().navigate(R.id.showsFragment)
+        }
+    }
+
     private fun validateEmail(email: String) {
-        // Implement your email validation logic using regex
         val regexPattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
 
         val isValidEmail = email.matches(Regex(regexPattern))
@@ -84,17 +81,28 @@ class LoginActivity : AppCompatActivity() {
     private fun updateLoginButtonState() {
         val isValidEmail = binding.emailEditText.text?.isNotBlank() ?: false
         val isValidPassword = (binding.passwordEditText.text?.length ?: 0) >= 6
-        val loginButton = findViewById<Button>(R.id.loginButton)
+        val loginButton = binding.loginButton
 
 
         if (isValidEmail && isValidPassword) {
             loginButton.isEnabled = true
-            loginButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
-            loginButton.setTextColor(ContextCompat.getColor(this, R.color.purple_background))
+            loginButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
+            loginButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple_background))
         } else {
             loginButton.isEnabled = false
-            loginButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.disabled_button_color)
-            loginButton.setTextColor(ContextCompat.getColor(this, R.color.white))
+            loginButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.disabled_button_color)
+            loginButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         }
+        initListeners()
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
+
+
+
+
