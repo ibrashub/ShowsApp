@@ -21,9 +21,6 @@ import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 
 class ShowDetailsFragment : Fragment() {
 
-    private var _rating: Int = 0
-    private var _comment: String = ""
-
     private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
 
@@ -86,13 +83,12 @@ class ShowDetailsFragment : Fragment() {
             val comment = binding.commentEditText.text.toString()
 
             if (rating > 0) {
-                _rating = rating
-                _comment = comment
                 addNewReviewToList(rating, comment)
 
             } else {
                 Toast.makeText(requireContext(), "Please provide a rating.", Toast.LENGTH_SHORT).show()
             }
+            dialog.dismiss()
         }
 
         dialog.show()
