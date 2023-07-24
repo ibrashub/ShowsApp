@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.model.Show
-import infinuma.android.shows.data.model.shows
 import infinuma.android.shows.databinding.ItemShowBinding
 
 class ShowsAdapter(

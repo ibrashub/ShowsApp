@@ -1,5 +1,7 @@
 package infinuma.android.shows.ui.login
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -17,7 +20,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private lateinit var sharedPreferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedPreferences = requireContext().getSharedPreferences("Remember Me", Context.MODE_PRIVATE)
+
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -25,6 +36,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val rememberMeCheckbox = sharedPreferences.getBoolean("rememberMeCheckbox", false)
+        if (rememberMeCheckbox) {
+            findNavController().navigate(R.id.showsFragment)
+        }
 
         updateLoginButtonState()
 
@@ -59,6 +75,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun initListeners() {
         binding.loginButton.setOnClickListener {
             findNavController().navigate(R.id.showsFragment)
+        }
+
+        binding.rememberMeCheckbox.setOnCheckedChangeListener { rememberMeCheckbox, isChecked ->
+            sharedPreferences.edit {
+                putBoolean("rememberMeCheckbox", binding.rememberMeCheckbox.isChecked)
+            }
         }
     }
 
