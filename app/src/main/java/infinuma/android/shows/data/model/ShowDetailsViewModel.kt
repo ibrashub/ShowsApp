@@ -1,31 +1,21 @@
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import infinuma.android.shows.data.model.Show
 import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.R
-
 
 class ShowDetailsViewModel : ViewModel() {
 
     private val reviews = listOf(
         Review(1, 5, "Ivan", "Best show ever!!!", R.drawable.ic_profile_placeholder),
-        Review(2, 2, "Mark", "Its fine", R.drawable.ic_profile_placeholder),
-        Review(3, 1, "Ivan", "WORST!", R.drawable.ic_profile_placeholder),
-        Review(4, 1, "User1231212", "Best show ever!!!", R.drawable.ic_profile_placeholder),
-        Review(5, 3, "User123123212", "Longer comment for testing purposes of the recyclerview", R.drawable.ic_profile_placeholder),
-        Review(6, 2, "User121771212", "haha!", R.drawable.ic_profile_placeholder),
+        Review(2, 3, "Mark", "An okay movie, not my favorite", R.drawable.ic_profile_placeholder),
+        Review(3, 1, "Renato", "WORST!", R.drawable.ic_profile_placeholder),
+        Review(4, 4, "User123", "Worth watching it", R.drawable.ic_profile_placeholder),
+        Review(5, 3, "ibra", "An okay movie, not my favorite. Worth watching it", R.drawable.ic_profile_placeholder),
+        Review(6, 4, "User999", "So funny haha!", R.drawable.ic_profile_placeholder),
     )
 
-    private val _showDetailsLiveData = MutableLiveData<Show>()
-    val showDetailsLiveData: LiveData<Show> = _showDetailsLiveData
-
-    private val _reviewsLiveData = MutableLiveData<List<Review>>()
-    val reviewsLiveData: LiveData<List<Review>> = _reviewsLiveData
-
-    private val _addNewReviewsLiveData = MutableLiveData<List<Review>>()
-    val addNewReviewsLiveData: LiveData<List<Review>> = _addNewReviewsLiveData
+    private var idIncrement = reviews.size
 
     private val _descriptionLiveData = MutableLiveData<String>()
     val descriptionLiveData: LiveData<String> = _descriptionLiveData
@@ -33,36 +23,50 @@ class ShowDetailsViewModel : ViewModel() {
     private val _imageResourceIdLiveData = MutableLiveData<Int>()
     val imageResourceIdLiveData: LiveData<Int> = _imageResourceIdLiveData
 
+    private val _reviewsLiveData = MutableLiveData<List<Review>>()
+    val reviewsLiveData: LiveData<List<Review>> = _reviewsLiveData
+
+    private val _ratingTextView = MutableLiveData<Pair<Int, Float>>()
+    val ratingTextView: LiveData<Pair<Int, Float>> = _ratingTextView
+
+    private val _totalRatingsLiveData = MutableLiveData<Int>()
+    val totalRatingsLiveData: LiveData<Int> = _totalRatingsLiveData
+
     private val _averageRatingLiveData = MutableLiveData<Float>()
     val averageRatingLiveData: LiveData<Float> = _averageRatingLiveData
-
-
-    init {
-        _reviewsLiveData.value = reviews
-    }
 
     fun populateShowData(description: String, imageResourceId: Int) {
         _descriptionLiveData.value = description
         _imageResourceIdLiveData.value = imageResourceId
     }
 
-    private fun calculateAverageRating(reviews: List<Review>) {
-        if (reviews.isEmpty()) {
-            _averageRatingLiveData.value = 0f
-            return
+    fun calculateAverageRating(): Pair<Int, Float> {
+        var totalRating = 0
+
+        for (review in reviews) {
+            totalRating += review.rating
         }
 
-        val totalRating = reviews.sumOf { it.rating }
-        val averageRating = totalRating.toFloat() / reviews.size
+        val averageRating = reviews.sumOf { it.rating }.toFloat() / reviews.size
+
+        _totalRatingsLiveData.value = reviews.size
         _averageRatingLiveData.value = averageRating
+
+        return Pair(totalRating, averageRating)
     }
 
-     fun addNewReviewToList(rating: Int, comment: String) {
-        val review = Review(reviews.size + 1, rating, "username", comment, R.drawable.ic_profile_placeholder)
+    fun addNewReviewToList(rating: Int, comment: String) {
+        idIncrement++
         val updatedReviews = reviews.toMutableList()
-         updatedReviews.add(review)
-        _reviewsLiveData.value = updatedReviews
+        val review = Review(idIncrement, rating, "username", comment, R.drawable.ic_profile_placeholder)
+        updatedReviews.add(review)
+        _reviewsLiveData.value = updatedReviews.toList()
+    }
 
+    init {
+        calculateAverageRating()
+        _reviewsLiveData.value = reviews
+        _ratingTextView.value = calculateAverageRating()
     }
 
 

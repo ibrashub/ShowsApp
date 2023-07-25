@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import infinuma.android.shows.R
 import infinuma.android.shows.data.model.Review
-import infinuma.android.shows.data.model.reviews
 import infinuma.android.shows.databinding.DialogAddReviewBinding
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 
@@ -45,18 +44,6 @@ class ShowDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
-        }
-
-        initReviewsRecycler()
-
-
-        adapter = ReviewsAdapter(emptyList()) { review ->
-
-        }
-
-
         binding.backButton.setOnClickListener {
             findNavController().navigate(R.id.showsFragment)
         }
@@ -72,24 +59,18 @@ class ShowDetailsFragment : Fragment() {
         val showImage = arguments?.getInt("showImage") ?: 0
         binding.toolbar.title = showName
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) {
-            adapter = ReviewsAdapter(reviews) { review ->
-                val intent = Intent(requireContext(), initReviewsRecycler()::class.java)
-                intent.putExtra("reviewId", review.id)
-                intent.putExtra("reviewRating", review.rating)
-                intent.putExtra("reviewName", review.name)
-                intent.putExtra("reviewComment", review.comment)
-                intent.putExtra("reviewImage", review.imageResourceId)
-                startActivity(intent)
-            }
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
+            adapter = ReviewsAdapter(reviews) {}
             binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
             binding.reviewsRecycler.adapter = adapter
             binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
-            val (totalRatings, averageRating) = calculateAverageRating(reviews)
-
-            binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
-            binding.averageRatingBar.rating = averageRating
+            viewModel.totalRatingsLiveData.observe(viewLifecycleOwner) { totalRatings ->
+                viewModel.averageRatingLiveData.observe(viewLifecycleOwner) { averageRating ->
+                    binding.averageRatingBar.rating = averageRating
+                    binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
+                }
+            }
         }
 
 
@@ -102,20 +83,11 @@ class ShowDetailsFragment : Fragment() {
         }
 
         viewModel.populateShowData(showDescription, showImage)
+        viewModel.calculateAverageRating()
 
-        viewModel.averageRatingLiveData.observe(viewLifecycleOwner) { averageRating ->
-            if (reviews.isEmpty()) {
-                binding.ratingTextView.visibility = View.GONE
-                binding.averageRatingBar.visibility = View.GONE
-                binding.reviewsRecycler.visibility = View.GONE
-                binding.noReviewsTextView.visibility = View.VISIBLE
-            } else {
-                binding.ratingTextView.text = "%d ratings, %.2f average".format(reviews.size, averageRating)
-                binding.averageRatingBar.rating = averageRating
-            }
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
+            adapter.updateReviews(updatedReviews)
         }
-
-
 
 
     }
@@ -147,52 +119,4 @@ class ShowDetailsFragment : Fragment() {
 
         dialog.show()
     }
-
-    private fun initReviewsRecycler() {
-        adapter = ReviewsAdapter(reviews) { review ->
-            val intent = Intent(requireContext(), initReviewsRecycler()::class.java)
-            intent.putExtra("reviewId", review.id)
-            intent.putExtra("reviewRating", review.rating)
-            intent.putExtra("reviewName", review.name)
-            intent.putExtra("reviewComment", review.comment)
-            intent.putExtra("reviewImage", review.imageResourceId)
-            startActivity(intent)
-        }
-        binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.reviewsRecycler.adapter = adapter
-        binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-
-        val (totalRatings, averageRating) = calculateAverageRating(reviews)
-
-        binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
-        binding.averageRatingBar.rating = averageRating
-    }
-
-    private fun calculateAverageRating(reviews: List<Review>): Pair<Int, Float> {
-        if (reviews.isEmpty()) {
-            binding.ratingTextView.visibility = View.GONE
-            binding.averageRatingBar.visibility = View.GONE
-            binding.reviewsRecycler.visibility = View.GONE
-            binding.noReviewsTextView.visibility = View.VISIBLE
-        }
-
-        var totalRating = 0
-
-        for (review in reviews) {
-            totalRating += review.rating
-        }
-
-        val averageRating = reviews.sumOf { it.rating }.toFloat() / reviews.size
-        return Pair(reviews.size, averageRating)
-    }
-
-    private fun addNewReviewToList(rating: Int, comment: String) {
-        val review = Review(reviews.size + 1, rating, "username", comment, R.drawable.ic_profile_placeholder)
-        adapter.addItem(review)
-        adapter.notifyDataSetChanged()
-//        val (totalRatings, averageRating) = calculateAverageRating(reviews)
-//        binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
-//        binding.averageRatingBar.rating = averageRating
-    }
-
 }

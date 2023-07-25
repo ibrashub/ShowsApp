@@ -2,12 +2,17 @@ package infinuma.android.shows.ui.login
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -16,6 +21,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.graphics.Bitmap
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import infinuma.android.shows.R
 import infinuma.android.shows.data.model.ShowsViewModel
 import infinuma.android.shows.databinding.DialogProfileSettingsBinding
@@ -51,6 +61,8 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         binding.showsProfilePhoto.setOnClickListener {
             showProfileBottomSheetDialog()
         }
+
+        checkIfPermissionNeeded()
 
 
         viewModel.showsLiveData.observe(viewLifecycleOwner) { showsList ->
@@ -97,15 +109,12 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         binding.profilePhoto.setImageResource(userProfilePhoto)
 
         binding.changePhotoButton.setOnClickListener {
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivity(cameraIntent)
             dialog.dismiss()
         }
 
         binding.LogoutButton.setOnClickListener {
-            sharedPreferences.edit {
-                remove("user_email")
-                putBoolean("rememberMeCheckbox", false)
-
-            }
             dialog.dismiss()
             findNavController().popBackStack(R.id.showsFragment, true)
 
@@ -116,6 +125,11 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                 .setPositiveButton(R.string.yes) { dialog, _ ->
                     findNavController().navigate(R.id.loginFragment)
                     dialog.dismiss()
+                    sharedPreferences.edit {
+                        remove("user_email")
+                        putBoolean("rememberMeCheckbox", false)
+
+                    }
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
@@ -126,6 +140,34 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         }
 
         dialog.show()
+    }
+
+    private fun checkIfPermissionNeeded() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is already available, run some code
+        } else {
+            // Permission is missing and must be requested.
+            requestCameraPermission()
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Permission has been granted. Start camera preview Activity.
+            } else {
+                // Permission request was denied.
+            }
+        }
+
+    private fun requestCameraPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            // Show rationale UI
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     override fun onDestroyView() {
