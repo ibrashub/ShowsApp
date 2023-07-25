@@ -102,15 +102,12 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
 
         binding.LogoutButton.setOnClickListener {
             sharedPreferences.edit {
-                putBoolean("rememberMeCheckbox", false)
                 remove("user_email")
-                dialog.dismiss()
-            }
+                putBoolean("rememberMeCheckbox", false)
 
-            requireActivity().supportFragmentManager.popBackStack(
-                R.id.loginFragment,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
+            }
+            dialog.dismiss()
+            findNavController().popBackStack(R.id.showsFragment, true)
 
             val builder = AlertDialog.Builder(context)
             builder

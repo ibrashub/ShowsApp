@@ -24,7 +24,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences = requireContext().getSharedPreferences("Remember Me", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("rememberMeCheckbox", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("user_email", Context.MODE_PRIVATE)
+
 
     }
 
@@ -39,7 +41,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val rememberMeCheckbox = sharedPreferences.getBoolean("rememberMeCheckbox", false)
         if (rememberMeCheckbox) {
-            findNavController().popBackStack(R.id.loginFragment, true)
             findNavController().navigate(R.id.showsFragment)
         }
 
@@ -76,10 +77,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun initListeners() {
         binding.loginButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
-            val sharedPreferences = requireContext().getSharedPreferences("user_email", Context.MODE_PRIVATE)
             sharedPreferences.edit {
                 putString("user_email", email)
             }
+            findNavController().popBackStack(R.id.loginFragment, true)
             findNavController().navigate(R.id.showsFragment)
         }
 
