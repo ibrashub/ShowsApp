@@ -14,11 +14,15 @@
     <string name="write_a_review">Write a review</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="reviews">Reviews</string>
     <string name="profile_picture">Profile picture</string>
     <string name="rating">rating</string>
     <string name="no_reviews_yet">No reviews yet.</string>
     <string name="welcome_message">Welcome</string>
     <string name="remember_me">Remember me</string>
+    <string name="logout">Logout</string>
+    <string name="change_photo">Change photo</string>
 
 </resources>

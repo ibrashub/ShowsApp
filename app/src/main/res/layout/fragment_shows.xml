@@ -7,28 +7,37 @@
     android:layout_height="match_parent"
     android:theme="@style/Theme.Shows">
 
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/showsToolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="?attr/colorOnSecondary"
-        android:textStyle="bold"
-        android:textSize="40sp"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/logout_button"
+        android:id="@+id/showsProfilePhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_logout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_gravity="end"
         android:layout_margin="24dp"
-        />
+        android:clickable="true"
+        android:src="@drawable/ic_profile_placeholder"
+        android:focusable="true"
+        app:layout_constraintEnd_toEndOf="@id/showsToolbar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:text="@string/app_name"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/showsToolbar"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showsRecycler"

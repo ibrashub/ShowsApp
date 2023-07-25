@@ -11,6 +11,10 @@
         tools:layout="@layout/fragment_login">
         <action android:id="@+id/action_loginFragment_to_showsFragment"
             app:destination="@id/showsFragment"/>
+        <argument
+            android:name="userEmail"
+            app:argType="string" />
+
     </fragment>
 
     <fragment
