@@ -67,6 +67,7 @@ class ShowDetailsFragment : Fragment() {
             binding.averageRatingBar.rating = averageRating
         }
 
+
         viewModel.descriptionLiveData.observe(viewLifecycleOwner) { description ->
             binding.showDescriptionTextView.text = description
         }
