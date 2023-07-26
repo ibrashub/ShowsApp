@@ -64,9 +64,9 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
 
         checkIfPermissionNeeded()
 
-        val sharedPreferences by lazy {
-            requireContext().getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
-        }
+//        val sharedPreferences by lazy {
+//            requireContext().getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+//        }
         val imageFilePath = sharedPreferences.getString("image_path", null)
         if (imageFilePath != null) {
             val imageUri = Uri.fromFile(File(imageFilePath))
@@ -109,11 +109,10 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         val dialog = BottomSheetDialog(requireContext())
         val binding = DialogProfileSettingsBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
-        val imageUriString = sharedPreferences.getString("image_uri", null)
+        val imageUriString = sharedPreferences.getString("image_path", null)
         val userEmail =
             sharedPreferences.getString(USER_EMAIL, R.string.default_email.toString()) ?: USER_EMAIL
         //val userProfilePhoto = R.drawable.ic_profile_placeholder
-
 
         if (imageUriString != null) {
             val imageUri = Uri.parse(imageUriString)
@@ -157,6 +156,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                     sharedPreferences.edit {
                         remove(USER_EMAIL)
                         putBoolean(REMEMBER_ME, false)
+                        remove("image_path")
 
                     }
                     findNavController().navigate(R.id.loginFragment)
@@ -213,7 +213,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
             val bitmap = BitmapFactory.decodeFile(resizedImageFile?.path)
             binding.showsProfilePhoto.setImageBitmap(bitmap)
 
-            val sharedPreferences = requireContext().getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+            val sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
             sharedPreferences.edit {
                 putString("image_path", resizedImageFile?.absolutePath)
             }
@@ -231,7 +231,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                     latestTmpUri = uri
                     selectImageFromGalleryResult.launch("image/*")
 
-                    val sharedPreferences = requireContext().getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+                    val sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
                     sharedPreferences.edit {
                         putString("image_uri", uri.toString())
                     }
