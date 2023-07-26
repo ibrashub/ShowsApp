@@ -1,8 +1,9 @@
+package infinuma.android.shows.ui.shows
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.R
+import infinuma.android.shows.data.model.Review
 
 class ShowDetailsViewModel : ViewModel() {
 
@@ -26,14 +27,9 @@ class ShowDetailsViewModel : ViewModel() {
     private val _reviewsLiveData = MutableLiveData<List<Review>>()
     val reviewsLiveData: LiveData<List<Review>> = _reviewsLiveData
 
-    private val _ratingTextView = MutableLiveData<Pair<Int, Float>>()
-    val ratingTextView: LiveData<Pair<Int, Float>> = _ratingTextView
+    private val _ratingTextViewLiveData = MutableLiveData<Pair<Int, Float>>()
+    val ratingTextViewLiveData: LiveData<Pair<Int, Float>> = _ratingTextViewLiveData
 
-    private val _totalRatingsLiveData = MutableLiveData<Int>()
-    val totalRatingsLiveData: LiveData<Int> = _totalRatingsLiveData
-
-    private val _averageRatingLiveData = MutableLiveData<Float>()
-    val averageRatingLiveData: LiveData<Float> = _averageRatingLiveData
 
     fun populateShowData(description: String, imageResourceId: Int) {
         _descriptionLiveData.value = description
@@ -48,10 +44,7 @@ class ShowDetailsViewModel : ViewModel() {
         }
 
         val averageRating = reviews.sumOf { it.rating }.toFloat() / reviews.size
-
-        _totalRatingsLiveData.value = reviews.size
-        _averageRatingLiveData.value = averageRating
-
+        _ratingTextViewLiveData.value = Pair(reviews.size, averageRating)
         return Pair(totalRating, averageRating)
     }
 
@@ -64,9 +57,8 @@ class ShowDetailsViewModel : ViewModel() {
     }
 
     init {
-        calculateAverageRating()
         _reviewsLiveData.value = reviews
-        _ratingTextView.value = calculateAverageRating()
+        _ratingTextViewLiveData.value = calculateAverageRating()
     }
 
 

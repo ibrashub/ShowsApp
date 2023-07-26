@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
@@ -82,4 +84,29 @@ object FileUtil {
         }
 
     }
+
+    fun resizeAndSaveImage(context: Context, imageUri: Uri): File? {
+        val sourceBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+        val resizedBitmap = resizeBitmap(sourceBitmap, targetSize = 512) // Adjust the targetSize as needed
+        val resizedFile = createImageFile(context)
+
+        try {
+            val outputStream = FileOutputStream(resizedFile)
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream) // Adjust the compression quality as needed
+            outputStream.close()
+            return resizedFile
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    private fun resizeBitmap(bitmap: Bitmap, targetSize: Int): Bitmap {
+        val scaleFactor = targetSize.toFloat() / bitmap.width.toFloat()
+        val targetHeight = 60
+        val targetWidth = 60
+        return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
+    }
+
 }

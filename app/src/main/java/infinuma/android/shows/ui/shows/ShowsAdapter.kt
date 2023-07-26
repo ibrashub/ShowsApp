@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui.login
+package infinuma.android.shows.ui.shows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

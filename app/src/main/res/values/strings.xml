@@ -11,6 +11,9 @@
     <string name="noShowsText">Your shows are not showing. Get it?</string>
     <string name="back_button">back button</string>
     <string name="show_name">Show name</string>
+    <string name="showName">showName</string>
+    <string name="show_description">showDescription</string>
+    <string name="show_image">showImage</string>
     <string name="write_a_review">Write a review</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
@@ -23,6 +26,16 @@
     <string name="welcome_message">Welcome</string>
     <string name="remember_me">Remember me</string>
     <string name="logout">Logout</string>
+    <string name="logout_confirmation_title">Logout confirmation</string>
+    <string name="logout_confirmation_message">Are you sure you want to log out?</string>
+    <string name="user_email">user_email</string>
+    <string name="default_email">default@email.com</string>
     <string name="change_photo">Change photo</string>
+    <string name="ratings_average">%d ratings, %.2f average</string>
+    <string name="provide_rating_error">Please provide a rating.</string>
+    <string name="remember_me_checkbox">rememberMeCheckbox</string>
+
+
+
 
 </resources>

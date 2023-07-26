@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profilePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="24dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50"
         android:src="@drawable/ic_profile_placeholder"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
         android:id="@+id/emailTextProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="replace@email.com"
+        android:text="@string/default_email"
         android:textColor="?attr/colorOnSecondary"
         android:textStyle="bold"
         android:textSize="28sp"

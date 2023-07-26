@@ -1,7 +1,5 @@
-package infinuma.android.shows.ui.login
+package infinuma.android.shows.ui.shows
 
-import ShowDetailsViewModel
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,24 +8,20 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import infinuma.android.shows.R
-import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.databinding.DialogAddReviewBinding
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
+import infinuma.android.shows.ui.login.ReviewsAdapter
 
 class ShowDetailsFragment : Fragment() {
-
-    private var _rating: Int = 0
-    private var _comment: String = ""
 
     private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
 
-    private val args by navArgs<ShowDetailsFragmentArgs>()
+    //    private val args by navArgs<ShowDetailsFragmentArgs>()
     private val viewModel by viewModels<ShowDetailsViewModel>()
 
     private val binding get() = _binding!!
@@ -45,10 +39,10 @@ class ShowDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.backButton.setOnClickListener {
-            findNavController().navigate(R.id.showsFragment)
+            findNavController().popBackStack()
         }
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) {
             binding.reviewButton.setOnClickListener {
                 showBottomSheetDialog()
             }
@@ -59,20 +53,19 @@ class ShowDetailsFragment : Fragment() {
         val showImage = arguments?.getInt("showImage") ?: 0
         binding.toolbar.title = showName
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
-            adapter = ReviewsAdapter(reviews) {}
-            binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
-            binding.reviewsRecycler.adapter = adapter
-            binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        adapter = ReviewsAdapter(emptyList()) {}
+        binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.reviewsRecycler.adapter = adapter
+        binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
-            viewModel.totalRatingsLiveData.observe(viewLifecycleOwner) { totalRatings ->
-                viewModel.averageRatingLiveData.observe(viewLifecycleOwner) { averageRating ->
-                    binding.averageRatingBar.rating = averageRating
-                    binding.ratingTextView.text = "%d ratings, %.2f average".format(totalRatings, averageRating)
-                }
-            }
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
+            adapter.updateReviews(reviews)
         }
 
+        viewModel.ratingTextViewLiveData.observe(viewLifecycleOwner) { (totalRatings, averageRating) ->
+            binding.ratingTextView.text = getString(R.string.ratings_average, totalRatings, averageRating)
+            binding.averageRatingBar.rating = averageRating
+        }
 
         viewModel.descriptionLiveData.observe(viewLifecycleOwner) { description ->
             binding.showDescriptionTextView.text = description
@@ -80,16 +73,14 @@ class ShowDetailsFragment : Fragment() {
 
         viewModel.imageResourceIdLiveData.observe(viewLifecycleOwner) { imageResourceId ->
             binding.showImageView.setImageResource(imageResourceId)
+
         }
 
         viewModel.populateShowData(showDescription, showImage)
         viewModel.calculateAverageRating()
-
         viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
             adapter.updateReviews(updatedReviews)
         }
-
-
     }
 
     private fun showBottomSheetDialog() {
@@ -101,18 +92,16 @@ class ShowDetailsFragment : Fragment() {
             dialog.dismiss()
         }
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) {
             binding.submitButton.setOnClickListener {
                 val rating = binding.ratingBar.rating.toInt()
                 val comment = binding.commentEditText.text.toString()
 
                 if (rating > 0) {
-                    _rating = rating
-                    _comment = comment
                     viewModel.addNewReviewToList(rating, comment)
                     dialog.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "Please provide a rating.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.provide_rating_error, Toast.LENGTH_SHORT).show()
                 }
             }
         }
