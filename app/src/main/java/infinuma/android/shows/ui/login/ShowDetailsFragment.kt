@@ -21,9 +21,6 @@ import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 
 class ShowDetailsFragment : Fragment() {
 
-    private var _rating: Int = 0
-    private var _comment: String = ""
-
     private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
 
@@ -74,12 +71,14 @@ class ShowDetailsFragment : Fragment() {
         }
 
 
+
         viewModel.descriptionLiveData.observe(viewLifecycleOwner) { description ->
             binding.showDescriptionTextView.text = description
         }
 
         viewModel.imageResourceIdLiveData.observe(viewLifecycleOwner) { imageResourceId ->
             binding.showImageView.setImageResource(imageResourceId)
+
         }
 
         viewModel.populateShowData(showDescription, showImage)
