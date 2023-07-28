@@ -1,5 +1,7 @@
 package infinuma.android.shows.ui.login
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,17 +9,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.FragmentLoginBinding
+
+const val REMEMBER_ME = "rememberMeCheckbox"
+const val USER_EMAIL = "user_email"
+const val PREFERENCE_SHOW = "show"
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences2: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
+        sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
+
+
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -25,6 +44,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val rememberMeCheckbox = sharedPreferences.getBoolean(REMEMBER_ME, false)
+        if (rememberMeCheckbox) {
+            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+        }
 
         updateLoginButtonState()
 
@@ -58,7 +82,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun initListeners() {
         binding.loginButton.setOnClickListener {
-            findNavController().navigate(R.id.showsFragment)
+            val email = binding.emailEditText.text.toString()
+            sharedPreferences.edit {
+                putString(USER_EMAIL, email)
+            }
+            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+        }
+
+        binding.rememberMeCheckbox.setOnCheckedChangeListener { rememberMeCheckbox, isChecked ->
+            sharedPreferences.edit {
+                putBoolean(REMEMBER_ME, binding.rememberMeCheckbox.isChecked)
+            }
         }
     }
 

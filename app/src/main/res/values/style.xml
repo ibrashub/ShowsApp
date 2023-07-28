@@ -5,9 +5,16 @@
         <item name="shapeAppearanceOverlay">@style/RoundedButtonShapeAppearance</item>
         <item name="android:textColor">@color/purple_background</item>
         <item name="backgroundTint">@color/white</item>
+        <item name="strokeColor">@color/purple_background</item>
     </style>
 
-    <style name="SubmitButton" parent="Widget.MaterialComponents.Button">
+    <style name="ShapeAppearanceOverlay.App.CornerSize50" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+
+    <style name="PurpleButton" parent="Widget.MaterialComponents.Button">
         <item name="shapeAppearanceOverlay">@style/RoundedButtonShapeAppearance</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="backgroundTint">@color/purple_background</item>

@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.model.Review
-import infinuma.android.shows.data.model.reviews
 import infinuma.android.shows.databinding.ItemReviewBinding
 
 class ReviewsAdapter(
@@ -23,15 +22,12 @@ class ReviewsAdapter(
         holder.bind(reviewsList[position])
     }
 
-    fun addItem(review: Review) {
-        reviewsList = reviewsList.toMutableList().apply {
-            add(review)
-        }
+    fun updateReviews(updatedReviews: List<Review>) {
+        reviewsList = updatedReviews
         notifyDataSetChanged()
     }
 
     inner class ReviewViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: Review) {
             binding.username.text = item.name
             binding.userImage.setImageResource(item.imageResourceId)
