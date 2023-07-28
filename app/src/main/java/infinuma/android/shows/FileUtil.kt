@@ -69,7 +69,7 @@ object FileUtil {
         }
     }
 
-    fun createImageFile(context: Context): File? {
+    private fun createImageFile(context: Context): File? {
         try {
             val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AVATAR_FILENAME)
             if (file.exists().not() && file.createNewFile().not()) {

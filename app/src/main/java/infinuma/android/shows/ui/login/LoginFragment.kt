@@ -17,6 +17,7 @@ import infinuma.android.shows.databinding.FragmentLoginBinding
 
 const val REMEMBER_ME = "rememberMeCheckbox"
 const val USER_EMAIL = "user_email"
+const val PREFERENCE_SHOW = "show"
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
@@ -24,11 +25,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val binding get() = _binding!!
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences2: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
+
         sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
+        sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
 
 
     }
@@ -44,7 +47,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val rememberMeCheckbox = sharedPreferences.getBoolean(REMEMBER_ME, false)
         if (rememberMeCheckbox) {
-            findNavController().navigate(R.id.showsFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
 
         updateLoginButtonState()
@@ -83,8 +86,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             sharedPreferences.edit {
                 putString(USER_EMAIL, email)
             }
-            findNavController().popBackStack(R.id.loginFragment, true)
-            findNavController().navigate(R.id.showsFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
 
         binding.rememberMeCheckbox.setOnCheckedChangeListener { rememberMeCheckbox, isChecked ->

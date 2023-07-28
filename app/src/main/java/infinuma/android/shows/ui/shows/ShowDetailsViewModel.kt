@@ -51,7 +51,7 @@ class ShowDetailsViewModel : ViewModel() {
     fun addNewReviewToList(rating: Int, comment: String) {
         idIncrement++
         val updatedReviews = reviews.toMutableList()
-        val review = Review(idIncrement, rating, "username", comment, R.drawable.ic_profile_placeholder)
+        val review = Review(idIncrement, rating, R.string.username.toString(), comment, R.drawable.ic_profile_placeholder)
         updatedReviews.add(review)
         _reviewsLiveData.value = updatedReviews.toList()
     }
