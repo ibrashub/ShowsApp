@@ -39,8 +39,8 @@
     <string name="ratings_average">%d ratings, %.2f average</string>
     <string name="provide_rating_error">Please provide a rating.</string>
     <string name="remember_me_checkbox">rememberMeCheckbox</string>
-
-
-
+    <string name="register">Register</string>
+    <string name="registration_successful">Registration Successful!</string>
+    <string name="repeat_password">Repeat password</string>
 
 </resources>

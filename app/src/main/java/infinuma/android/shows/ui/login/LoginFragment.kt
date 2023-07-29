@@ -50,6 +50,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
 
+        parentFragmentManager.setFragmentResultListener("registrationResult", viewLifecycleOwner) { _, bundle ->
+            val isSuccess = bundle.getBoolean("isSuccess")
+            if (isSuccess) {
+                binding.loginText.text = "Registration\nsuccessful!"
+                binding.registerButton.visibility = View.INVISIBLE
+            }
+        }
+
         updateLoginButtonState()
 
         binding.emailEditText.addTextChangedListener(object : TextWatcher {
@@ -87,6 +95,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 putString(USER_EMAIL, email)
             }
             findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+        }
+
+        binding.registerButton.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
         binding.rememberMeCheckbox.setOnCheckedChangeListener { rememberMeCheckbox, isChecked ->
