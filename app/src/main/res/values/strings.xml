@@ -42,5 +42,6 @@
     <string name="register">Register</string>
     <string name="registration_successful">Registration Successful!</string>
     <string name="repeat_password">Repeat password</string>
+    <string name="invalid_login">Invalid login credentials. Please try again.</string>
 
 </resources>

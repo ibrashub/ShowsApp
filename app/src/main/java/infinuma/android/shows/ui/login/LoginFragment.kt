@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
@@ -42,27 +43,28 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
 
         viewModel.loginLiveData.observe(this) { isSuccessful ->
-            if (!isSuccessful) {
-                findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
-            } else {
-                val builder = AlertDialog.Builder(context)
-                builder
-                    .setTitle("Login failed!")
-                    .setMessage("A user with this email doesn't exist. Would you like to create a new account?")
-                    .setPositiveButton("Yes") { dialog, _ ->
-                        findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("No") {dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .show()
-            }
+            if (isSuccessful) {
+                // Login successful, extract token data from ViewModel
+                val accessToken = viewModel.getAccessToken() ?: ""
+                val client = viewModel.getClient() ?: ""
+                val uid = viewModel.getUid() ?: ""
 
+                // Set authentication headers for subsequent API requests
+                ApiModule.setAuthHeaders(accessToken, client, uid)
+
+                findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+
+            } else {
+                // Login failed, show an error dialog
+                Toast.makeText(requireContext(), R.string.invalid_login, Toast.LENGTH_SHORT).show()
+
+            }
         }
 
 
     }
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)

@@ -7,6 +7,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import infinuma.android.shows.data.model.RegisterRequest
 import infinuma.android.shows.data.model.RegisterResponse
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,4 +43,31 @@ object ApiModule {
             .build()
             .create(ShowsApiService::class.java)
     }
+
+    // Function to set authentication headers and update the Retrofit instance
+    fun setAuthHeaders(accessToken: String, client: String, uid: String) {
+        val authInterceptor = Interceptor { chain ->
+            val originalRequest = chain.request()
+            val authenticatedRequest = originalRequest.newBuilder()
+                .header("token-type", "Bearer")
+                .header("access-token", accessToken)
+                .header("client", client)
+                .header("uid", uid)
+                .build()
+            chain.proceed(authenticatedRequest)
+        }
+
+        val authenticatedOkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .client(OkHttpClient())
+            .build()
+            .create(ShowsApiService::class.java)
+    }
+
+
 }
