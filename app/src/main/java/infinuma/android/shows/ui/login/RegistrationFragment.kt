@@ -1,5 +1,6 @@
 package infinuma.android.shows.ui.login
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,22 +11,56 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
-import infinuma.android.shows.databinding.FragmentRegisterBinding
+import infinuma.android.shows.databinding.FragmentRegistrationBinding
+import infinuma.android.shows.networking.ApiModule
 
-class RegisterFragment : Fragment(R.layout.fragment_register) {
+class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
-    private var _binding: FragmentRegisterBinding? = null
+    private var _binding: FragmentRegistrationBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: RegistrationViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        ApiModule.initRetrofit(requireContext())
+
+
+        viewModel.coroutineDemo()
+
+
+
+        viewModel.registrationResultLiveData.observe(this) { isSuccessful ->
+            if (isSuccessful) {
+                setFragmentResult("registrationResult", bundleOf("isSuccess" to true))
+                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            } else {
+                val builder = AlertDialog.Builder(context)
+                builder
+                    .setTitle("Registration failed!")
+                    .setMessage("Email already exists.")
+                    .setPositiveButton("Try again") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
+
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
         return binding.root
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initRegisterButton()
 
 
         updateRegisterButtonState()
@@ -70,13 +105,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         })
     }
 
-    private fun initListeners() {
-        binding.registerButton.setOnClickListener {
-            setFragmentResult("registrationResult", bundleOf("isSuccess" to true))
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-
+    private fun initRegisterButton() = with(binding) {
+        registerButton.setOnClickListener {
+            viewModel.onRegisterButtonClicked(
+                username = emailEditText.text.toString(),
+                password = passwordEditText.text.toString()
+            )
         }
-
     }
 
     private fun validateEmail(email: String) {
@@ -118,7 +153,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.disabled_button_color)
             registerButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         }
-        initListeners()
 
     }
 

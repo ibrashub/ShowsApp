@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="infinuma.android.shows.ui.login.RegisterFragment"
+        android:name="infinuma.android.shows.ui.login.RegistrationFragment"
         tools:layout="@layout/fragment_login">
         <action android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"
