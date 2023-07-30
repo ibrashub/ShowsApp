@@ -28,11 +28,6 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
         ApiModule.initRetrofit(requireContext())
 
-
-        viewModel.coroutineDemo()
-
-
-
         viewModel.registrationResultLiveData.observe(this) { isSuccessful ->
             if (isSuccessful) {
                 setFragmentResult("registrationResult", bundleOf("isSuccess" to true))

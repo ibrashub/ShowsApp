@@ -4,10 +4,13 @@ import android.content.Context
 import android.util.Log
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import infinuma.android.shows.data.model.RegisterRequest
+import infinuma.android.shows.data.model.RegisterResponse
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 
 object ApiModule {
@@ -21,7 +24,6 @@ object ApiModule {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor(ChuckerInterceptor.Builder(context).build())
-            //.build()
             .addInterceptor { chain ->
                 val request = chain.request()
                 Log.d("OkHttp", "Request URL: ${request.url}")

@@ -7,9 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.model.RegisterRequest
 import infinuma.android.shows.networking.ApiModule
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RegistrationViewModel : ViewModel() {
@@ -37,32 +34,5 @@ class RegistrationViewModel : ViewModel() {
                 passwordConfirmation = passwordConfirmation
             )
         )
-
-    fun coroutineDemo() {
-        val job = viewModelScope.launch(Dispatchers.IO) {
-            Log.e("Coroutine", "This is executed in $coroutineContext")
-            try {
-                writeEverySecond()
-            } catch (e: CancellationException) {
-                Log.e("Coroutine", "Canceled")
-            } catch (e: IllegalStateException) {
-                Log.e("Coroutine", "Error handled")
-            }
-
-        }
-        viewModelScope.launch {
-            delay(10000)
-            job.cancel()
-        }
-    }
-
-    private suspend fun writeEverySecond() {
-        var timer = 0
-        while (true) {
-            Log.e("Coroutine", "The timer value ${timer++}")
-            delay(2000)
-            if (timer == 2) throw IllegalStateException()
-        }
-    }
 
 }

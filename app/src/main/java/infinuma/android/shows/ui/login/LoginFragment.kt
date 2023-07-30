@@ -1,5 +1,6 @@
 package infinuma.android.shows.ui.login
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,7 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.FragmentLoginBinding
@@ -24,6 +28,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: LoginViewModel by viewModels()
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
@@ -33,9 +38,28 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         ApiModule.initRetrofit(requireContext())
 
-
         sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
         sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
+
+        viewModel.loginLiveData.observe(this) { isSuccessful ->
+            if (!isSuccessful) {
+                findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+            } else {
+                val builder = AlertDialog.Builder(context)
+                builder
+                    .setTitle("Login failed!")
+                    .setMessage("A user with this email doesn't exist. Would you like to create a new account?")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("No") {dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
+
+        }
 
 
     }
@@ -48,6 +72,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initLoginButton()
 
         val rememberMeCheckbox = sharedPreferences.getBoolean(REMEMBER_ME, false)
         if (rememberMeCheckbox) {
@@ -92,15 +118,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     }
 
-    private fun initListeners() {
-        binding.loginButton.setOnClickListener {
+    private fun initLoginButton() = with(binding) {
+        loginButton.setOnClickListener {
+            viewModel.onLoginButtonClicked(
+                username = emailEditText.text.toString(),
+                password = passwordEditText.text.toString()
+            )
             val email = binding.emailEditText.text.toString()
             sharedPreferences.edit {
                 putString(USER_EMAIL, email)
             }
-            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
+    }
 
+    private fun initListeners() {
         binding.registerButton.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
