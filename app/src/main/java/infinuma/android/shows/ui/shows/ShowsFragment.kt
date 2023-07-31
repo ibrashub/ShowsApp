@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import infinuma.android.shows.FileUtil
@@ -56,6 +57,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
             showProfileBottomSheetDialog()
         }
 
+        viewModel.fetchShows()
         setProfileImage()
         initRecyclerView()
         observeShowsLiveData()
@@ -197,29 +199,33 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         binding.showsRecycler.addItemDecoration(
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         )
-    }
-
-    private fun setupAdapter(showsList: List<Show>) {
-        adapter = ShowsAdapter(showsList) { show ->
+        adapter = ShowsAdapter(emptyList()) { show ->
             val destination = ShowsFragmentDirections.actionShowsFragmentToShowDetailsFragment(
                 showId = show.id,
-                showName = show.name,
-                showDescription = show.description,
-                showImage = show.imageResourceId
+                showName = show.title,
+                showImage = show.imageUrl,
+                showDescription = show.description
             )
             findNavController().navigate(destination)
         }
         binding.showsRecycler.adapter = adapter
+
     }
 
-    private fun observeShowsLiveData() {
-        viewModel.showsLiveData.observe(viewLifecycleOwner) { showsList ->
-            setupAdapter(showsList)
-        }
+    private fun setupAdapter(showsList: List<Show>) {
+        adapter.updateData(showsList)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+
+private fun observeShowsLiveData() {
+    viewModel.showsLiveData.observe(viewLifecycleOwner) { showsList ->
+        Log.d("ShowsFragment", "Received showsLiveData with data: $showsList")
+        setupAdapter(showsList)
     }
+}
+
+override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+}
 }

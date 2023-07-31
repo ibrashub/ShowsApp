@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.DialogAddReviewBinding
@@ -42,21 +43,22 @@ class ShowDetailsFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) {
-            binding.reviewButton.setOnClickListener {
-                showBottomSheetDialog()
-            }
+        binding.reviewButton.setOnClickListener {
+            showBottomSheetDialog()
         }
 
         val showName = arguments?.getString("showName")
         val showDescription = arguments?.getString("showDescription") ?: ""
-        val showImage = arguments?.getInt("showImage") ?: 0
+        val showImage = arguments?.getString("showImage") ?: 0
         binding.toolbar.title = showName
 
         adapter = ReviewsAdapter(emptyList()) {}
         binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.reviewsRecycler.adapter = adapter
         binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+
+        val showId = arguments?.getString("showId") ?: ""
+        viewModel.fetchReviews(showId)
 
         viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
             adapter.updateReviews(reviews)
@@ -72,12 +74,16 @@ class ShowDetailsFragment : Fragment() {
             binding.showDescriptionTextView.text = description
         }
 
-        viewModel.imageResourceIdLiveData.observe(viewLifecycleOwner) { imageResourceId ->
-            binding.showImageView.setImageResource(imageResourceId)
-
+        viewModel.imageUrlLiveData.observe(viewLifecycleOwner) { imageUrl ->
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.image_error)
+                .into(binding.showImageView)
         }
 
-        viewModel.populateShowData(showDescription, showImage)
+
+        viewModel.populateShowData(showDescription, showImage as String)
         viewModel.calculateAverageRating()
         viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
             adapter.updateReviews(updatedReviews)
@@ -93,17 +99,18 @@ class ShowDetailsFragment : Fragment() {
             dialog.dismiss()
         }
 
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) {
-            binding.submitButton.setOnClickListener {
-                val rating = binding.ratingBar.rating.toInt()
-                val comment = binding.commentEditText.text.toString()
+        binding.submitButton.setOnClickListener {
+            val rating = binding.ratingBar.rating.toInt()
+            val comment = binding.commentEditText.text.toString()
+            val userId = ""
+            val userEmail = ""
+            val userImageUrl = ""
 
-                if (rating > 0) {
-                    viewModel.addNewReviewToList(rating, comment)
-                    dialog.dismiss()
-                } else {
-                    Toast.makeText(requireContext(), R.string.provide_rating_error, Toast.LENGTH_SHORT).show()
-                }
+            if (rating > 0) {
+                viewModel.addNewReviewToList(rating, comment, userId, userEmail, userImageUrl)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), R.string.provide_rating_error, Toast.LENGTH_SHORT).show()
             }
         }
 

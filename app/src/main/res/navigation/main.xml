@@ -63,8 +63,8 @@
             app:argType="string"/>
         <argument
             android:name="showImage"
-            android:defaultValue="0"
-            app:argType="integer"/>
+            android:defaultValue="image_url"
+            app:argType="string"/>
     </fragment>
 
 </navigation>

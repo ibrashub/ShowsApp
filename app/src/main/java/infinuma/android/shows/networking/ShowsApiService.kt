@@ -5,7 +5,9 @@ import infinuma.android.shows.data.model.LoginRequest
 import infinuma.android.shows.data.model.LoginResponse
 import infinuma.android.shows.data.model.RegisterRequest
 import infinuma.android.shows.data.model.RegisterResponse
+import infinuma.android.shows.data.model.ReviewResponse
 import infinuma.android.shows.data.model.Show
+import infinuma.android.shows.data.model.ShowsResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -14,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ShowsApiService {
 
@@ -23,7 +26,11 @@ interface ShowsApiService {
     @POST("users/sign_in")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
-    @GET("api/shows")
-    fun getShows(@Header("Authorization") authToken: String?): Call<List<Show?>?>?
+    @GET("shows")
+    suspend fun getShows(): Response<ShowsResponse>
+
+    @GET("/shows/{showId}/reviews")
+    suspend fun getReviews(@Path("showId") showId: String): Response<ReviewResponse>
+
 
 }

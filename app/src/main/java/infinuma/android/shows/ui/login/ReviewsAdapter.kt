@@ -7,7 +7,7 @@ import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.databinding.ItemReviewBinding
 
 class ReviewsAdapter(
-    private var reviewsList: List<Review>,
+    private var reviews: List<Review>,
     private val onItemClickCallback: (Review) -> Unit
 ) : RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
@@ -16,23 +16,23 @@ class ReviewsAdapter(
         return ReviewViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = reviewsList.count()
+    override fun getItemCount(): Int = reviews.count()
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
-        holder.bind(reviewsList[position])
+        holder.bind(reviews[position])
     }
 
-    fun updateReviews(updatedReviews: List<Review>) {
-        reviewsList = updatedReviews
+    fun updateReviews(newReviews: List<Review>) {
+        reviews = newReviews
         notifyDataSetChanged()
     }
 
     inner class ReviewViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Review) {
-            binding.username.text = item.name
-            binding.userImage.setImageResource(item.imageResourceId)
-            binding.userComment.text = item.comment
-            binding.starAmount.text = item.rating.toString()
+        fun bind(review: Review) {
+            binding.username.text = review.user.email
+            binding.userComment.text = review.comment
+            binding.starAmount.text = review.rating.toString()
+
 
         }
     }

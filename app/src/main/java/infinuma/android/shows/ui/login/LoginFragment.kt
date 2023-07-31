@@ -1,6 +1,5 @@
 package infinuma.android.shows.ui.login
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -12,9 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -44,20 +41,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewModel.loginLiveData.observe(this) { isSuccessful ->
             if (isSuccessful) {
-                // Login successful, extract token data from ViewModel
-                val accessToken = viewModel.getAccessToken() ?: ""
-                val client = viewModel.getClient() ?: ""
-                val uid = viewModel.getUid() ?: ""
+                val accessToken = viewModel.getAccessToken()
+                val client = viewModel.getClient()
+                val uid = viewModel.getUid()
 
-                // Set authentication headers for subsequent API requests
                 ApiModule.setAuthHeaders(accessToken, client, uid)
 
                 findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
 
             } else {
-                // Login failed, show an error dialog
                 Toast.makeText(requireContext(), R.string.invalid_login, Toast.LENGTH_SHORT).show()
-
             }
         }
 
@@ -138,7 +131,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-        binding.rememberMeCheckbox.setOnCheckedChangeListener { rememberMeCheckbox, isChecked ->
+        binding.rememberMeCheckbox.setOnCheckedChangeListener { _, _ ->
             sharedPreferences.edit {
                 putBoolean(REMEMBER_ME, binding.rememberMeCheckbox.isChecked)
             }

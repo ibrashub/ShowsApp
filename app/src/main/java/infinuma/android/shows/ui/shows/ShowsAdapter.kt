@@ -3,6 +3,7 @@ package infinuma.android.shows.ui.shows
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import infinuma.android.shows.data.model.Show
 import infinuma.android.shows.databinding.ItemShowBinding
 
@@ -22,6 +23,11 @@ class ShowsAdapter(
         holder.bind(items[position])
     }
 
+    fun updateData(newShowsList: List<Show>) {
+        items = newShowsList
+        notifyDataSetChanged()
+    }
+
     inner class ShowsViewHolder(private val binding: ItemShowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
@@ -35,8 +41,8 @@ class ShowsAdapter(
         }
 
         fun bind(item: Show) {
-            binding.showName.text = item.name
-            binding.showImage.setImageResource(item.imageResourceId)
+            binding.showName.text = item.title
+            Glide.with(binding.showImage).load(item.imageUrl).into(binding.showImage)
             binding.showDescription.text = item.description
             binding.root.setOnClickListener {
                 onItemClickCallback(item)

@@ -27,11 +27,7 @@ object ApiModule {
             .addInterceptor(ChuckerInterceptor.Builder(context).build())
             .addInterceptor { chain ->
                 val request = chain.request()
-                Log.d("OkHttp", "Request URL: ${request.url}")
-                Log.d("OkHttp", "Request Headers: ${request.headers}")
                 val response = chain.proceed(request)
-                Log.d("OkHttp", "Response Code: ${response.code}")
-                Log.d("OkHttp", "Response Headers: ${response.headers}")
                 response
             }
             .build()
@@ -44,7 +40,6 @@ object ApiModule {
             .create(ShowsApiService::class.java)
     }
 
-    // Function to set authentication headers and update the Retrofit instance
     fun setAuthHeaders(accessToken: String, client: String, uid: String) {
         val authInterceptor = Interceptor { chain ->
             val originalRequest = chain.request()
@@ -57,14 +52,15 @@ object ApiModule {
             chain.proceed(authenticatedRequest)
         }
 
-        val authenticatedOkHttpClient = OkHttpClient.Builder()
+        val okhttp = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .build()
+
 
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .client(OkHttpClient())
+            .client(okhttp)
             .build()
             .create(ShowsApiService::class.java)
     }

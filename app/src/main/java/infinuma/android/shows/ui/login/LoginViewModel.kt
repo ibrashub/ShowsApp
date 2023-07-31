@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.model.LoginRequest
 import infinuma.android.shows.data.model.LoginResponse
 import infinuma.android.shows.networking.ApiModule
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,21 +25,18 @@ class LoginViewModel : ViewModel() {
     fun onLoginButtonClicked(username: String, password: String) {
         viewModelScope.launch {
             try {
-                // Call the login API
                 val response = login(username, password)
-
-                // Check if the response is successful
                 if (response.isSuccessful) {
-                    // Update the token data properties
+
                     accessToken = response.headers()["access-token"] ?: ""
                     client = response.headers()["client"] ?: ""
                     uid = response.headers()["uid"] ?: ""
-
-                    // Notify the login result through MutableLiveData
                     _loginLiveData.value = true
+
+                    ApiModule.setAuthHeaders(accessToken, client, uid)
                 } else {
-                    // Login failed, notify the login result
                     _loginLiveData.value = false
+
                 }
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Error: ${e.message}", e)
@@ -63,15 +59,3 @@ class LoginViewModel : ViewModel() {
             )
         }
 }
-
-//    fun onLoginButtonClicked(username: String, password: String) = viewModelScope.launch { ----------OLD LOGIN BUTTON CLICKED
-//        try {
-//            val loginResponse = login(username, password)
-//            _loginLiveData.value = loginResponse.isSuccessful
-//            loginResponse.headers()
-//        } catch (e: Exception) {
-//            Log.e("LoginViewModel", "Error: ${e.message}", e)
-//            _loginLiveData.value = false
-//        }
-//
-//    }
