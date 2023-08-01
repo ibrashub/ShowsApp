@@ -18,9 +18,12 @@ import infinuma.android.shows.R
 import infinuma.android.shows.databinding.FragmentLoginBinding
 import infinuma.android.shows.networking.ApiModule
 
-const val REMEMBER_ME = "rememberMeCheckbox"
+const val REMEMBER_ME = "remember_me_data"
 const val USER_EMAIL = "user_email"
 const val PREFERENCE_SHOW = "show"
+private const val ACCESS_TOKEN = "access-token"
+private const val CLIENT = "client"
+private const val UID = "uid"
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
@@ -30,6 +33,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
+    private lateinit var sharedPreferences3: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
         sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
+        sharedPreferences3 = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
 
         viewModel.loginLiveData.observe(this) { isSuccessful ->
             if (isSuccessful) {
@@ -46,6 +51,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 val uid = viewModel.getUid()
 
                 ApiModule.setAuthHeaders(accessToken, client, uid)
+                sharedPreferences3.edit {
+                    putString(ACCESS_TOKEN, accessToken)
+                    putString(CLIENT, client)
+                    putString(UID, uid)
+                }
 
                 findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
 
@@ -56,8 +66,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
     }
-
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
@@ -70,18 +78,28 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         initLoginButton()
 
-        val rememberMeCheckbox = sharedPreferences.getBoolean(REMEMBER_ME, false)
+        val rememberMeCheckbox = sharedPreferences3.getBoolean(REMEMBER_ME, false)
         if (rememberMeCheckbox) {
-            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
-        }
+            val accessToken = sharedPreferences3.getString(ACCESS_TOKEN, null)
+            val client = sharedPreferences3.getString(CLIENT, null)
+            val uid = sharedPreferences3.getString(UID, null)
 
-        parentFragmentManager.setFragmentResultListener("registrationResult", viewLifecycleOwner) { _, bundle ->
-            val isSuccess = bundle.getBoolean("isSuccess")
-            if (isSuccess) {
-                binding.loginText.text = "Registration\nsuccessful!"
-                binding.registerButton.visibility = View.INVISIBLE
+            if (accessToken != null && client != null && uid != null) {
+                ApiModule.setAuthHeaders(accessToken, client, uid)
+                findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+            } else {
+                // Handle the case when the stored values are missing or invalid.
+                // For example, show a message to the user indicating that they need to log in again.
+                Toast.makeText(requireContext(), R.string.auth_error, Toast.LENGTH_SHORT).show()
             }
         }
+
+        val registrationSuccess = arguments?.getBoolean("registrationSuccess", false) ?: false
+        if (registrationSuccess) {
+            binding.loginText.text = getString(R.string.registration_successful)
+            binding.registerButton.visibility = View.INVISIBLE
+        }
+
 
         updateLoginButtonState()
 
@@ -132,25 +150,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         binding.rememberMeCheckbox.setOnCheckedChangeListener { _, _ ->
-            sharedPreferences.edit {
+            sharedPreferences3.edit {
                 putBoolean(REMEMBER_ME, binding.rememberMeCheckbox.isChecked)
             }
         }
     }
 
     private fun validateEmail(email: String) {
-        val regexPattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
+        val regexPattern = getString(R.string.regex_pattern)
 
         val isValidEmail = email.matches(Regex(regexPattern))
 
-        binding.emailEditText.error = if (isValidEmail) null else "Invalid Email"
+        binding.emailEditText.error = if (isValidEmail) null else getString(R.string.invalid_email)
         updateLoginButtonState()
     }
 
     private fun validatePassword(password: String) {
         val isValidPassword = password.length >= 6
 
-        binding.passwordEditText.error = if (isValidPassword) null else "Invalid password"
+        binding.passwordEditText.error = if (isValidPassword) null else getString(R.string.invalid_password)
         updateLoginButtonState()
     }
 

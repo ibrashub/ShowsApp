@@ -28,9 +28,9 @@
                 <ImageView
                     android:id="@+id/showImage"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerInside"
-                    tools:src="@drawable/ic_stranger_things"/>
+                    android:layout_height="wrap_content"
+                    android:scaleType="center"
+                    tools:src="@drawable/test"/>
 
             </FrameLayout>
 
@@ -49,6 +49,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageContainer"
                 tools:text="Stranger Things"/>
+
+            <TextView
+                android:id="@+id/showId"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/showDescription"

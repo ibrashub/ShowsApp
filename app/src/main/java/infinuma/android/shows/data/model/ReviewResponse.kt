@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReviewResponse(
     @SerialName("reviews") val reviews: List<Review>,
-    @SerialName("meta") val meta: Meta,
-    @SerialName("pagination") val pagination: Pagination
 )
 
 @Serializable
@@ -23,5 +21,5 @@ data class Review(
 data class User(
     @SerialName("id") val id: String,
     @SerialName("email") val email: String,
-    @SerialName("image_url") val imageUrl: String?
+    @SerialName("image_url") var imageUrl: String
 )

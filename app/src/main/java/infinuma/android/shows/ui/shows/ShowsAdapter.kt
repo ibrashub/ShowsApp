@@ -2,8 +2,10 @@ package infinuma.android.shows.ui.shows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import infinuma.android.shows.R
 import infinuma.android.shows.data.model.Show
 import infinuma.android.shows.databinding.ItemShowBinding
 
@@ -41,8 +43,13 @@ class ShowsAdapter(
         }
 
         fun bind(item: Show) {
+            binding.showId.text = item.id.toString()
             binding.showName.text = item.title
-            Glide.with(binding.showImage).load(item.imageUrl).into(binding.showImage)
+            Glide.with(binding.showImage)
+                .load(item.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.image_error)
+                .into(binding.showImage)
             binding.showDescription.text = item.description
             binding.root.setOnClickListener {
                 onItemClickCallback(item)

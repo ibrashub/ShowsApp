@@ -1,5 +1,7 @@
 package infinuma.android.shows.ui.shows
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,15 +17,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.DialogAddReviewBinding
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
+import infinuma.android.shows.ui.login.REMEMBER_ME
 import infinuma.android.shows.ui.login.ReviewsAdapter
 
 class ShowDetailsFragment : Fragment() {
 
     private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
-
-    //    private val args by navArgs<ShowDetailsFragmentArgs>()
     private val viewModel by viewModels<ShowDetailsViewModel>()
+    private lateinit var sharedPreferences3: SharedPreferences
 
     private val binding get() = _binding!!
 
@@ -38,6 +40,8 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferences3 = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
+
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
@@ -47,18 +51,32 @@ class ShowDetailsFragment : Fragment() {
             showBottomSheetDialog()
         }
 
+        val showId = arguments?.getInt("showId") ?: 0
         val showName = arguments?.getString("showName")
-        val showDescription = arguments?.getString("showDescription") ?: ""
-        val showImage = arguments?.getString("showImage") ?: 0
         binding.toolbar.title = showName
+
+        viewModel.fetchShowDetails(showId)
+
+        viewModel.fetchReviews(showId)
+
+
 
         adapter = ReviewsAdapter(emptyList()) {}
         binding.reviewsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.reviewsRecycler.adapter = adapter
         binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
-        val showId = arguments?.getString("showId") ?: ""
-        viewModel.fetchReviews(showId)
+        viewModel.showDetailsLiveData.observe(viewLifecycleOwner) { showDetails ->
+            //binding.showName.text = showDetails.title
+            Glide.with(requireContext())
+                .load(showDetails.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.image_error)
+                .into(binding.showImageView)
+            binding.showDescriptionTextView.text = showDetails.description
+        }
+
+
 
         viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
             adapter.updateReviews(reviews)
@@ -69,24 +87,20 @@ class ShowDetailsFragment : Fragment() {
             binding.averageRatingBar.rating = averageRating
         }
 
+        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
+            if (reviews == null || reviews.isEmpty()) {
+                binding.noReviewsTextView.visibility = View.VISIBLE
+                binding.reviewsRecycler.visibility = View.GONE
+                binding.ratingTextView.visibility = View.GONE
+                binding.averageRatingBar.visibility = View.GONE
+            } else {
+                binding.noReviewsTextView.visibility = View.GONE
+                binding.reviewsRecycler.visibility = View.VISIBLE
+                binding.ratingTextView.visibility = View.VISIBLE
+                binding.averageRatingBar.visibility = View.VISIBLE
 
-        viewModel.descriptionLiveData.observe(viewLifecycleOwner) { description ->
-            binding.showDescriptionTextView.text = description
-        }
-
-        viewModel.imageUrlLiveData.observe(viewLifecycleOwner) { imageUrl ->
-            Glide.with(requireContext())
-                .load(imageUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.image_error)
-                .into(binding.showImageView)
-        }
-
-
-        viewModel.populateShowData(showDescription, showImage as String)
-        viewModel.calculateAverageRating()
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { updatedReviews ->
-            adapter.updateReviews(updatedReviews)
+                adapter.updateReviews(reviews)
+            }
         }
     }
 
@@ -103,7 +117,7 @@ class ShowDetailsFragment : Fragment() {
             val rating = binding.ratingBar.rating.toInt()
             val comment = binding.commentEditText.text.toString()
             val userId = ""
-            val userEmail = ""
+            val userEmail = sharedPreferences3.getString("uid", "") ?: ""
             val userImageUrl = ""
 
             if (rating > 0) {

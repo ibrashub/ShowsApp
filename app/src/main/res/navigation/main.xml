@@ -36,7 +36,10 @@
         android:id="@+id/showsFragment"
         android:name="infinuma.android.shows.ui.shows.ShowsFragment"
         tools:layout="@layout/fragment_shows">
-
+        <argument
+            android:name="registrationSuccess"
+            android:defaultValue="false"
+            app:argType="boolean" />
         <action android:id="@+id/action_showsFragment_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment"/>
         <action android:id="@+id/action_showsFragment_to_loginFragment"

@@ -1,5 +1,6 @@
 package infinuma.android.shows.ui.shows
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.model.Review
 import infinuma.android.shows.data.model.ReviewResponse
+import infinuma.android.shows.data.model.ShowDetails
 import infinuma.android.shows.data.model.User
 import infinuma.android.shows.networking.ApiModule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -28,10 +32,35 @@ class ShowDetailsViewModel : ViewModel() {
     private val _ratingTextViewLiveData = MutableLiveData<Pair<Int, Float>>()
     val ratingTextViewLiveData: LiveData<Pair<Int, Float>> = _ratingTextViewLiveData
 
-    fun fetchReviews(showId: String) {
+    private val _reviewCreateResponseLiveData = MutableLiveData<ReviewResponse>()
+    val reviewCreateResponseLiveData: LiveData<ReviewResponse> = _reviewCreateResponseLiveData
+
+    private val _showDetailsLiveData = MutableLiveData<ShowDetails>()
+    val showDetailsLiveData: LiveData<ShowDetails> = _showDetailsLiveData
+
+    fun fetchShowDetails(showId: Int) {
         viewModelScope.launch {
             try {
-                val response = getReviews(showId)
+                val response = ApiModule.retrofit.getShowDetails(showId)
+                if (response.isSuccessful) {
+                    val showDetailsResponse = response.body()
+                    val showDetails = showDetailsResponse?.show
+                    showDetails?.let {
+                        _showDetailsLiveData.value = it
+                    }
+                } else {
+                    Log.e("ViewModel", "Unable to fetch show details. Response code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching show details: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchReviews(showId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = ApiModule.retrofit.getReviews(showId)
                 if (response.isSuccessful) {
                     val reviewResponse = response.body()
                     reviewResponse?.let {
@@ -41,18 +70,13 @@ class ShowDetailsViewModel : ViewModel() {
                     Log.e("ViewModel", "Unable to fetch reviews. Response code: ${response.code()}")
                 }
             } catch (e: Exception) {
-            Log.e("ViewModel", "Error fetching reviews: ${e.message}")
+                Log.e("ViewModel", "Error fetching reviews: ${e.message}")
             }
         }
     }
 
-    private suspend fun getReviews(showId: String): Response<ReviewResponse> {
+    private suspend fun getReviews(showId: Int): Response<ReviewResponse> {
         return ApiModule.retrofit.getReviews(showId)
-    }
-
-    fun populateShowData(description: String, imageResourceId: String) {
-        _descriptionLiveData.value = description
-        _imageUrlLiveData.value = imageResourceId
     }
 
     fun calculateAverageRating(): Pair<Int, Float> {
@@ -74,8 +98,8 @@ class ShowDetailsViewModel : ViewModel() {
         return Pair(totalRating, averageRating)
     }
 
-    fun addNewReviewToList(rating: Int, comment: String, userId: String, userEmail: String, userImageUrl: String?) {
-        val updatedReviews = reviewsLiveData.value?.toMutableList() ?: mutableListOf()
+    fun addNewReviewToList(rating: Int, comment: String, userId: String, userEmail: String, userImageUrl: String) {
+        val currentReviews = reviewsLiveData.value?.toMutableList() ?: mutableListOf()
         val review = Review(
             id = "",
             comment = comment,
@@ -87,7 +111,37 @@ class ShowDetailsViewModel : ViewModel() {
                 imageUrl = userImageUrl
             )
         )
-        updatedReviews.add(review)
-        _reviewsLiveData.value = updatedReviews.toList()
+        currentReviews.add(review)
+        _reviewsLiveData.value = currentReviews.toList()
+
+        viewModelScope.launch {
+            try {
+                val response = ApiModule.retrofit.createReview(review)
+                if (response.isSuccessful) {
+                    val reviewResponse = response.body()
+                    reviewResponse?.let {
+                        // Update the LiveData with the new review response
+                        _reviewCreateResponseLiveData.value = it
+                    }
+                } else {
+                    // Handle API error here (e.g., show an error message)
+                    Log.e("ViewModel", "Error creating review. Response code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                // Handle network error here (e.g., show an error message)
+                Log.e("ViewModel", "Error creating review: ${e.message}")
+            }
+        }
     }
+    //    private fun getResourceName(resourceId: Int): String {
+    //        return try {
+    //            // Get the resource name as a string
+    //            val context = getApplication<Application>().applicationContext
+    //            context?.resources?.getResourceName(resourceId) ?: ""
+    //
+    //        } catch (e: Exception) {
+    //            Log.e("ViewModel", "Error getting resource name: ${e.message}")
+    //            ""
+    //        }
+    //    }
 }

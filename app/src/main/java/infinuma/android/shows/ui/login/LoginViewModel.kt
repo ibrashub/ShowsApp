@@ -18,6 +18,8 @@ class LoginViewModel : ViewModel() {
     private var accessToken: String = ""
     private var client: String = ""
     private var uid: String = ""
+    private var userId: String = ""
+    private var imageUrl: String = ""
 
     private val _loginLiveData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val loginLiveData: LiveData<Boolean> = _loginLiveData
@@ -31,6 +33,8 @@ class LoginViewModel : ViewModel() {
                     accessToken = response.headers()["access-token"] ?: ""
                     client = response.headers()["client"] ?: ""
                     uid = response.headers()["uid"] ?: ""
+                    userId = response.headers()["userid"] ?: ""
+                    imageUrl = response.headers()["imageUrl"] ?: ""
                     _loginLiveData.value = true
 
                     ApiModule.setAuthHeaders(accessToken, client, uid)

@@ -43,10 +43,12 @@
             <ImageView
                 android:id="@+id/showImageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="240dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:padding="16dp"
+                android:src="@drawable/test"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"

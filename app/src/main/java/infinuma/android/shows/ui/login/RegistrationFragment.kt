@@ -30,8 +30,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
         viewModel.registrationResultLiveData.observe(this) { isSuccessful ->
             if (isSuccessful) {
-                setFragmentResult("registrationResult", bundleOf("isSuccess" to true))
-                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                findNavController().navigate(R.id.action_registerFragment_to_loginFragment, bundleOf("registrationSuccess" to true))
             } else {
                 val builder = AlertDialog.Builder(context)
                 builder
