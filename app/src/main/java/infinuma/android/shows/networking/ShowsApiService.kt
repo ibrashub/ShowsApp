@@ -1,10 +1,11 @@
 package infinuma.android.shows.networking
 
+import infinuma.android.shows.data.model.GetReviewsResponse
 import infinuma.android.shows.data.model.LoginRequest
 import infinuma.android.shows.data.model.LoginResponse
 import infinuma.android.shows.data.model.RegisterRequest
 import infinuma.android.shows.data.model.RegisterResponse
-import infinuma.android.shows.data.model.Review
+import infinuma.android.shows.data.model.ReviewRequest
 import infinuma.android.shows.data.model.ReviewResponse
 import infinuma.android.shows.data.model.ShowDetailsResponse
 import infinuma.android.shows.data.model.ShowsResponse
@@ -31,24 +32,20 @@ interface ShowsApiService {
     @Multipart
     @PUT("users")
     suspend fun uploadProfilePhoto(
-        @Part image: MultipartBody.Part,
-        @Header("uid") uid: String,
-        @Header("client") client: String,
-        @Header("access-token") accessToken: String
+        @Part image: MultipartBody.Part
     ): Response<UserResponse>
+
+    @POST("/reviews")
+    suspend fun createReview(@Body request: ReviewRequest): Response<ReviewResponse>
+
+    @GET("/shows/{showId}/reviews")
+    suspend fun getReviews(@Path("showId") showId: Int): Response<GetReviewsResponse>
 
     @GET("shows")
     suspend fun getShows(): Response<ShowsResponse>
 
     @GET("shows/{id}")
     suspend fun getShowDetails(@Path("id") showId: Int): Response<ShowDetailsResponse>
-
-
-    @POST("/reviews")
-    suspend fun createReview(@Body review: Review): Response<ReviewResponse>
-
-    @GET("/shows/{showId}/reviews")
-    suspend fun getReviews(@Path("showId") showId: Int): Response<ReviewResponse>
 
 
 }

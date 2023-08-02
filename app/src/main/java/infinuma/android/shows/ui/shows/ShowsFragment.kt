@@ -25,6 +25,7 @@ import infinuma.android.shows.FileUtil
 import infinuma.android.shows.R
 import infinuma.android.shows.data.model.Show
 import infinuma.android.shows.data.model.ShowsViewModel
+import infinuma.android.shows.data.model.User
 import infinuma.android.shows.databinding.DialogProfileSettingsBinding
 import infinuma.android.shows.databinding.FragmentShowsBinding
 import infinuma.android.shows.ui.login.PREFERENCE_SHOW
@@ -40,6 +41,8 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferences2: SharedPreferences
     private lateinit var sharedPreferences3: SharedPreferences
+    private lateinit var user: User
+
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,9 +60,15 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewModel = ViewModelProvider(this, ShowsViewModelFactory(sharedPreferences)).get(ShowsViewModel::class.java)
+        val viewModel = ViewModelProvider(this, ShowsViewModelFactory(sharedPreferences))[ShowsViewModel::class.java]
 
-
+        val email = ""
+        val userId = ""
+        val accessToken = ""
+        val client = ""
+        val imageUrl = ""
+        user = User(userId, email = email, accessToken = accessToken, client = client, imageUrl = imageUrl)
+        viewModel.setCurrentUser(user = user)
         binding.showsProfilePhoto.setOnClickListener {
             showProfileBottomSheetDialog()
         }
@@ -147,8 +156,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         uri?.let {
             val resizedImageFile = FileUtil.resizeAndSaveImage(requireContext(), uri)
             binding.showsProfilePhoto.setImageURI(uri)
-            //setProfileImage(resizedImageFile?.absolutePath)
-
+            viewModel.onProfilePhotoSelected(uri)
             sharedPreferences2.edit {
                 putString(PREFERENCE_SHOW, resizedImageFile?.absolutePath)
             }
@@ -162,8 +170,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
             latestTmpUri?.let { uri ->
                 val resizedImageFile = FileUtil.resizeAndSaveImage(requireContext(), uri)
                 binding.showsProfilePhoto.setImageURI(uri)
-                //setProfileImage(resizedImageFile?.absolutePath)
-
+                viewModel.onProfilePhotoSelected(uri)
                 sharedPreferences2.edit {
                     putString(PREFERENCE_SHOW, resizedImageFile?.absolutePath)
                 }
@@ -217,9 +224,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         adapter = ShowsAdapter(emptyList()) { show ->
             val destination = ShowsFragmentDirections.actionShowsFragmentToShowDetailsFragment(
                 showId = show.id,
-                showName = show.title,
-                showImage = show.imageUrl,
-                showDescription = show.description
+                showName = show.title
             )
             findNavController().navigate(destination)
         }

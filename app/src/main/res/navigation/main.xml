@@ -58,16 +58,8 @@
             app:argType="integer"/>
         <argument
             android:name="showName"
-            android:defaultValue="Name"
-            app:argType="string"/>
-        <argument
-            android:name="showDescription"
-            android:defaultValue="Description"
-            app:argType="string"/>
-        <argument
-            android:name="showImage"
-            android:defaultValue="image_url"
-            app:argType="string"/>
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
 </navigation>

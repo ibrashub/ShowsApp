@@ -88,8 +88,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 ApiModule.setAuthHeaders(accessToken, client, uid)
                 findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
             } else {
-                // Handle the case when the stored values are missing or invalid.
-                // For example, show a message to the user indicating that they need to log in again.
                 Toast.makeText(requireContext(), R.string.auth_error, Toast.LENGTH_SHORT).show()
             }
         }

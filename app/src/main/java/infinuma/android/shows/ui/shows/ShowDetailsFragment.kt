@@ -114,14 +114,14 @@ class ShowDetailsFragment : Fragment() {
         }
 
         binding.submitButton.setOnClickListener {
-            val rating = binding.ratingBar.rating.toInt()
+            val id = ""
             val comment = binding.commentEditText.text.toString()
-            val userId = ""
-            val userEmail = sharedPreferences3.getString("uid", "") ?: ""
-            val userImageUrl = ""
+            val rating = binding.ratingBar.rating.toInt()
+            val showId = 0
+
 
             if (rating > 0) {
-                viewModel.addNewReviewToList(rating, comment, userId, userEmail, userImageUrl)
+                viewModel.addNewReviewToList(comment = comment, rating = rating,  showId = showId)
                 dialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), R.string.provide_rating_error, Toast.LENGTH_SHORT).show()

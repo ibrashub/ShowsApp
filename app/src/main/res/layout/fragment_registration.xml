@@ -70,8 +70,8 @@
             android:layout_marginStart="@dimen/spacing_3x"
             android:layout_marginEnd="@dimen/spacing_3x"
             android:hint="@string/email"
-            app:boxStrokeColor="@drawable/selectors"
             android:textColorHint="@color/white"
+            app:boxStrokeColor="@drawable/selectors"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/registerText"
             >
@@ -95,10 +95,10 @@
             android:layout_marginStart="@dimen/spacing_3x"
             android:layout_marginEnd="@dimen/spacing_3x"
             android:hint="@string/password"
+            android:textColorHint="@color/white"
             app:boxStrokeColor="@drawable/selectors"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/white"
-            android:textColorHint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout">
 
@@ -134,6 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:paddingEnd="@dimen/spacing_5x"/>
 

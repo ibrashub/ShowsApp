@@ -11,17 +11,11 @@ data class ShowDetailsResponse(
 
 @Serializable
 data class ShowDetails(
-    @SerialName("id")
-    val id: String,
-    @SerialName("average_rating")
-    val averageRating: Float?,
-    @SerialName("description")
-    val description: String?,
-    @SerialName("image_url")
-    val imageUrl: String,
-    @SerialName("no_of_reviews")
-    val numberOfReviews: Int,
-    @SerialName("title")
-    val title: String
+    @SerialName("id") val id: String,
+    @SerialName("average_rating") val averageRating: Float?,
+    @SerialName("description") val description: String?,
+    @SerialName("image_url") val imageUrl: String,
+    @SerialName("no_of_reviews") val numberOfReviews: Int,
+    @SerialName("title") val title: String
 )
 

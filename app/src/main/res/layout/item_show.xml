@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="350dp"
+    android:layout_height="400dp"
     android:padding="8dp"
     android:clipToPadding="false">
 
@@ -59,17 +59,18 @@
 
             <TextView
                 android:id="@+id/showDescription"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSecondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/showName"
-                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"/>
+                tools:text="Lorem ipsum dolor sit amet, consectetur ds sd sd sdadipiscing elit, sed do eiusmod temporconsect etur adipiscing elit, sed do eiusmod tempor"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
