@@ -114,10 +114,9 @@ class ShowDetailsFragment : Fragment() {
         }
 
         binding.submitButton.setOnClickListener {
-            val id = ""
             val comment = binding.commentEditText.text.toString()
             val rating = binding.ratingBar.rating.toInt()
-            val showId = 0
+            val showId = arguments?.getInt("showId") ?: 0
 
 
             if (rating > 0) {

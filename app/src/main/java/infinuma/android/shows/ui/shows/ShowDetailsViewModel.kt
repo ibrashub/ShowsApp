@@ -53,7 +53,7 @@ class ShowDetailsViewModel : ViewModel() {
         }
     }
 
-      fun fetchReviews(showId: Int) {
+    fun fetchReviews(showId: Int) {
         viewModelScope.launch {
             try {
                 val response = ApiModule.retrofit.getReviews(showId)
@@ -72,40 +72,31 @@ class ShowDetailsViewModel : ViewModel() {
         }
     }
 
-    fun addNewReviewToList(comment: String? = null, rating: Int, showId: Int) = viewModelScope.launch {
-
-        try {
-            val response = createReview(comment, rating, showId)
-            if (response.isSuccessful) {
-                val reviewResponse = response.body()
-                reviewResponse?.let {
-                    _reviewCreateResponseLiveData.value = it
+    fun addNewReviewToList(rating: Int, comment: String? = null, showId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = createReview(rating, comment, showId)
+                if (response.isSuccessful) {
+                    val reviewResponse = response.body()
+                    reviewResponse?.let {
+                        _reviewCreateResponseLiveData.value = it
+                    }
+                } else {
+                    Log.e("ViewModel", "Error creating review. Response code: ${response.code()}")
                 }
-            } else {
-                Log.e("ViewModel", "Error creating review. Response code: ${response.code()}")
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error creating review: ${e.message}")
             }
-        } catch (e: Exception) {
-            Log.e("ViewModel", "Error creating review: ${e.message}")
         }
     }
 }
 
-private suspend fun createReview(comment: String? = null, rating: Int, showId: Int) =
+private suspend fun createReview(rating: Int, comment: String? = null, showId: Int) =
     ApiModule.retrofit.createReview(
         request = ReviewRequest(
-            comment = comment,
             rating = rating,
+            comment = comment,
             show_id = showId
         )
     )
-//    private fun getResourceName(resourceId: Int): String {
-//        return try {
-//            // Get the resource name as a string
-//            val context = getApplication<Application>().applicationContext
-//            context?.resources?.getResourceName(resourceId) ?: ""
-//
-//        } catch (e: Exception) {
-//            Log.e("ViewModel", "Error getting resource name: ${e.message}")
-//            ""
-//        }
-//    }
+
