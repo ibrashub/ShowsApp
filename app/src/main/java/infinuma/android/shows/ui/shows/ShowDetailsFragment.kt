@@ -20,12 +20,14 @@ import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 import infinuma.android.shows.ui.login.REMEMBER_ME
 import infinuma.android.shows.ui.login.ReviewsAdapter
 
+const val SHOW_ID = "showId"
+const val SHOW_NAME = "showName"
 class ShowDetailsFragment : Fragment() {
 
     private var _binding: FragmentShowDetailsBinding? = null
     private lateinit var adapter: ReviewsAdapter
     private val viewModel by viewModels<ShowDetailsViewModel>()
-    private lateinit var sharedPreferences3: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
 
     private val binding get() = _binding!!
 
@@ -40,7 +42,7 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedPreferences3 = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
 
 
         binding.backButton.setOnClickListener {
@@ -51,8 +53,8 @@ class ShowDetailsFragment : Fragment() {
             showBottomSheetDialog()
         }
 
-        val showId = arguments?.getInt("showId") ?: 0
-        val showName = arguments?.getString("showName")
+        val showId = arguments?.getInt(SHOW_ID) ?: 0
+        val showName = arguments?.getString(SHOW_NAME)
         binding.toolbar.title = showName
 
         viewModel.fetchShowDetails(showId)
@@ -67,40 +69,30 @@ class ShowDetailsFragment : Fragment() {
         binding.reviewsRecycler.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
 
         viewModel.showDetailsLiveData.observe(viewLifecycleOwner) { showDetails ->
-            //binding.showName.text = showDetails.title
             Glide.with(requireContext())
                 .load(showDetails.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.image_error)
                 .into(binding.showImageView)
             binding.showDescriptionTextView.text = showDetails.description
+
+        val averageRating = showDetails.averageRating
+        val totalRatings = showDetails.numberOfReviews
+        if (averageRating != null) {
+            binding.ratingTextView.text = getString(R.string.ratings_average, totalRatings, averageRating)
+        } else {
+            binding.noReviewsTextView.visibility = View.VISIBLE
+            binding.reviewsRecycler.visibility = View.GONE
+            binding.ratingTextView.visibility = View.GONE
+            binding.averageRatingBar.visibility = View.GONE
         }
+            binding.averageRatingBar.rating = averageRating ?: .2f
+    }
 
 
 
         viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
             adapter.updateReviews(reviews)
-        }
-
-        viewModel.ratingTextViewLiveData.observe(viewLifecycleOwner) { (totalRatings, averageRating) ->
-            binding.ratingTextView.text = getString(R.string.ratings_average, totalRatings, averageRating)
-            binding.averageRatingBar.rating = averageRating
-        }
-
-        viewModel.reviewsLiveData.observe(viewLifecycleOwner) { reviews ->
-            if (reviews == null || reviews.isEmpty()) {
-                binding.noReviewsTextView.visibility = View.VISIBLE
-                binding.reviewsRecycler.visibility = View.GONE
-                binding.ratingTextView.visibility = View.GONE
-                binding.averageRatingBar.visibility = View.GONE
-            } else {
-                binding.noReviewsTextView.visibility = View.GONE
-                binding.reviewsRecycler.visibility = View.VISIBLE
-                binding.ratingTextView.visibility = View.VISIBLE
-                binding.averageRatingBar.visibility = View.VISIBLE
-
-                adapter.updateReviews(reviews)
-            }
         }
     }
 
@@ -116,7 +108,7 @@ class ShowDetailsFragment : Fragment() {
         binding.submitButton.setOnClickListener {
             val comment = binding.commentEditText.text.toString()
             val rating = binding.ratingBar.rating.toInt()
-            val showId = arguments?.getInt("showId") ?: 0
+            val showId = arguments?.getInt(SHOW_ID) ?: 0
 
 
             if (rating > 0) {

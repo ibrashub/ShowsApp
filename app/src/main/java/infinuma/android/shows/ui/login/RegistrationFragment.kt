@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -34,9 +33,9 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
             } else {
                 val builder = AlertDialog.Builder(context)
                 builder
-                    .setTitle("Registration failed!")
-                    .setMessage("Email already exists.")
-                    .setPositiveButton("Try again") { dialog, _ ->
+                    .setTitle(R.string.registration_failed)
+                    .setMessage(R.string.email_exists_error)
+                    .setPositiveButton(R.string.try_again) { dialog, _ ->
                         dialog.dismiss()
                     }
                     .show()
@@ -109,25 +108,25 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
     }
 
     private fun validateEmail(email: String) {
-        val regexPattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
+        val regexPattern = getString(R.string.regex_pattern)
 
         val isValidEmail = email.matches(Regex(regexPattern))
 
-        binding.emailEditText.error = if (isValidEmail) null else "Invalid Email"
+        binding.emailEditText.error = if (isValidEmail) null else getString(R.string.invalid_email)
         updateRegisterButtonState()
     }
 
     private fun validatePassword(password: String) {
         val isValidPassword = password.length >= 6
 
-        binding.passwordEditText.error = if (isValidPassword) null else "Invalid password"
+        binding.passwordEditText.error = if (isValidPassword) null else getString(R.string.invalid_password)
         updateRegisterButtonState()
     }
 
     private fun validateRepeatPassword(password: String) {
         val isValidRepeatPassword = password == binding.passwordEditText.toString()
 
-        binding.passwordEditText.error = if (isValidRepeatPassword) null else "Invalid password"
+        binding.passwordEditText.error = if (isValidRepeatPassword) null else getString(R.string.invalid_password)
         updateRegisterButtonState()
     }
 

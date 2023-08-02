@@ -1,11 +1,10 @@
-package infinuma.android.shows.data.model
+package infinuma.android.shows.networking.requests
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegisterRequest(
+data class LoginRequest(
     @SerialName("email") val email: String,
     @SerialName("password") val password: String,
-    @SerialName("password_confirmation") val passwordConfirmation: String,
 )

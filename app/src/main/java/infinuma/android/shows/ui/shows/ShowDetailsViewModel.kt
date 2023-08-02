@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import infinuma.android.shows.data.model.Review
-import infinuma.android.shows.data.model.ReviewRequest
-import infinuma.android.shows.data.model.ReviewResponse
-import infinuma.android.shows.data.model.ShowDetails
+import infinuma.android.shows.networking.responses.Review
+import infinuma.android.shows.networking.requests.ReviewRequest
+import infinuma.android.shows.networking.responses.ReviewResponse
+import infinuma.android.shows.networking.responses.ShowDetails
 import infinuma.android.shows.networking.ApiModule
 import kotlinx.coroutines.launch
 
@@ -71,6 +71,18 @@ class ShowDetailsViewModel : ViewModel() {
             }
         }
     }
+
+//    fun calculateAverageRating(): Pair<Int, Float> {
+//        var totalRating = 0
+//
+//        for (review in reviews) {
+//            totalRating += review.rating
+//        }
+//
+//        val averageRating = reviews.sumOf { it.rating }.toFloat() / reviews.size
+//        _ratingTextViewLiveData.value = Pair(reviews.size, averageRating)
+//        return Pair(totalRating, averageRating)
+//    }
 
     fun addNewReviewToList(rating: Int, comment: String? = null, showId: Int) {
         viewModelScope.launch {

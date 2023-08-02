@@ -3,7 +3,7 @@ package infinuma.android.shows.ui.login
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import infinuma.android.shows.data.model.Review
+import infinuma.android.shows.networking.responses.Review
 import infinuma.android.shows.databinding.ItemReviewBinding
 
 class ReviewsAdapter(

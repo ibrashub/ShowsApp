@@ -21,6 +21,7 @@ import infinuma.android.shows.networking.ApiModule
 const val REMEMBER_ME = "remember_me_data"
 const val USER_EMAIL = "user_email"
 const val PREFERENCE_SHOW = "show"
+const val REGISTRATION_SUCCESS = "registrationSuccess"
 private const val ACCESS_TOKEN = "access-token"
 private const val CLIENT = "client"
 private const val UID = "uid"
@@ -32,8 +33,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val viewModel: LoginViewModel by viewModels()
 
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var sharedPreferences2: SharedPreferences
-    private lateinit var sharedPreferences3: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +40,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         ApiModule.initRetrofit(requireContext())
 
         sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
-        sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
-        sharedPreferences3 = requireContext().getSharedPreferences(REMEMBER_ME, Context.MODE_PRIVATE)
+
 
         viewModel.loginLiveData.observe(this) { isSuccessful ->
             if (isSuccessful) {
@@ -51,7 +49,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 val uid = viewModel.getUid()
 
                 ApiModule.setAuthHeaders(accessToken, client, uid)
-                sharedPreferences3.edit {
+                sharedPreferences.edit {
                     putString(ACCESS_TOKEN, accessToken)
                     putString(CLIENT, client)
                     putString(UID, uid)
@@ -78,11 +76,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         initLoginButton()
 
-        val rememberMeCheckbox = sharedPreferences3.getBoolean(REMEMBER_ME, false)
+        val rememberMeCheckbox = sharedPreferences.getBoolean(REMEMBER_ME, false)
         if (rememberMeCheckbox) {
-            val accessToken = sharedPreferences3.getString(ACCESS_TOKEN, null)
-            val client = sharedPreferences3.getString(CLIENT, null)
-            val uid = sharedPreferences3.getString(UID, null)
+            val accessToken = sharedPreferences.getString(ACCESS_TOKEN, null)
+            val client = sharedPreferences.getString(CLIENT, null)
+            val uid = sharedPreferences.getString(UID, null)
 
             if (accessToken != null && client != null && uid != null) {
                 ApiModule.setAuthHeaders(accessToken, client, uid)
@@ -92,7 +90,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }
 
-        val registrationSuccess = arguments?.getBoolean("registrationSuccess", false) ?: false
+        val registrationSuccess = arguments?.getBoolean(REGISTRATION_SUCCESS, false) ?: false
         if (registrationSuccess) {
             binding.loginText.text = getString(R.string.registration_successful)
             binding.registerButton.visibility = View.INVISIBLE
@@ -148,7 +146,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         binding.rememberMeCheckbox.setOnCheckedChangeListener { _, _ ->
-            sharedPreferences3.edit {
+            sharedPreferences.edit {
                 putBoolean(REMEMBER_ME, binding.rememberMeCheckbox.isChecked)
             }
         }

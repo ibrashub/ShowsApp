@@ -1,12 +1,10 @@
-package infinuma.android.shows.data.model
+package infinuma.android.shows.networking.responses
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class UserResponse(
-    val user: User
-)
-
-    data class User(
+@Serializable
+data class User(
 @SerialName("id") val id: String,
 @SerialName("client") val client: String,
 @SerialName("access-token") val accessToken: String,

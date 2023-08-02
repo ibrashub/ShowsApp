@@ -1,4 +1,4 @@
-package infinuma.android.shows.data.model
+package infinuma.android.shows.ui.shows
 
 import android.content.SharedPreferences
 import android.net.Uri
@@ -10,13 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import infinuma.android.shows.networking.ApiModule
+import infinuma.android.shows.networking.responses.Show
+import infinuma.android.shows.networking.responses.User
 import java.io.File
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-
-private const val BASE_URL = "https://tv-shows.infinum.academy/"
 
 class ShowsViewModel(private val sharedPreferences2: SharedPreferences) : ViewModel() {
 
@@ -57,7 +57,7 @@ class ShowsViewModel(private val sharedPreferences2: SharedPreferences) : ViewMo
                     val photoUrl = userResponse?.user?.imageUrl ?: ""
                     updateUserProfile(currentUser, photoUrl)
 
-                    photoUrl?.let {
+                    photoUrl.let {
                         currentUser.imageUrl = it
                     }
                 } else {

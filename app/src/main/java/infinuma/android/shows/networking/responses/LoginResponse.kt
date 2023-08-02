@@ -1,4 +1,4 @@
-package infinuma.android.shows.data.model
+package infinuma.android.shows.networking.responses
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

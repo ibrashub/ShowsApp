@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import infinuma.android.shows.data.model.LoginRequest
-import infinuma.android.shows.data.model.LoginResponse
+import infinuma.android.shows.networking.requests.LoginRequest
+import infinuma.android.shows.networking.responses.LoginResponse
 import infinuma.android.shows.networking.ApiModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -2,11 +2,10 @@ package infinuma.android.shows.ui.shows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import infinuma.android.shows.R
-import infinuma.android.shows.data.model.Show
+import infinuma.android.shows.networking.responses.Show
 import infinuma.android.shows.databinding.ItemShowBinding
 
 class ShowsAdapter(

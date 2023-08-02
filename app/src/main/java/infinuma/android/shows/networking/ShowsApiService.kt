@@ -1,20 +1,18 @@
 package infinuma.android.shows.networking
 
-import infinuma.android.shows.data.model.GetReviewsResponse
-import infinuma.android.shows.data.model.LoginRequest
-import infinuma.android.shows.data.model.LoginResponse
-import infinuma.android.shows.data.model.RegisterRequest
-import infinuma.android.shows.data.model.RegisterResponse
-import infinuma.android.shows.data.model.ReviewRequest
-import infinuma.android.shows.data.model.ReviewResponse
-import infinuma.android.shows.data.model.ShowDetailsResponse
-import infinuma.android.shows.data.model.ShowsResponse
-import infinuma.android.shows.data.model.UserResponse
+import infinuma.android.shows.networking.requests.LoginRequest
+import infinuma.android.shows.networking.requests.RegisterRequest
+import infinuma.android.shows.networking.requests.ReviewRequest
+import infinuma.android.shows.networking.responses.GetReviewsResponse
+import infinuma.android.shows.networking.responses.LoginResponse
+import infinuma.android.shows.networking.responses.RegisterResponse
+import infinuma.android.shows.networking.responses.ReviewResponse
+import infinuma.android.shows.networking.responses.ShowDetailsResponse
+import infinuma.android.shows.networking.responses.ShowsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -33,7 +31,7 @@ interface ShowsApiService {
     @PUT("users")
     suspend fun uploadProfilePhoto(
         @Part image: MultipartBody.Part
-    ): Response<UserResponse>
+    ): Response<PhotoUploadResponse>
 
     @POST("/reviews")
     suspend fun createReview(@Body request: ReviewRequest): Response<ReviewResponse>
