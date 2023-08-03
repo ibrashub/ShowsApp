@@ -9,6 +9,6 @@ data class User(
 @SerialName("client") val client: String,
 @SerialName("access-token") val accessToken: String,
 @SerialName("email") val email: String,
-@SerialName("image_url") var imageUrl: String
+@SerialName("image_url") var imageUrl: String?
 )
 

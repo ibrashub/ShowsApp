@@ -70,7 +70,6 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         super.onViewCreated(view, savedInstanceState)
 
         val viewModel = ViewModelProvider(this, ShowsViewModelFactory(sharedPreferences))[ShowsViewModel::class.java]
-
         val email = ""
         val userId = ""
         val accessToken = ""
@@ -207,11 +206,9 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                     val photoUrl = photoUploadResponse?.user?.imageUrl
                     //sharedPreferences.
                 } else {
-                    // Handle error
                     Log.e("File Upload", "Upload failed. Response code: ${response.code()}")
                 }
             } catch (e: Exception) {
-                // Handle exception
                 Log.e("File Upload", "Error uploading file: ${e.message}")
             }
         }
