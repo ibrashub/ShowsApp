@@ -18,11 +18,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import infinuma.android.shows.FileUtil
 import infinuma.android.shows.R
+import infinuma.android.shows.ShowApplication
+import infinuma.android.shows.data.model.db_shows.ShowViewModelFactory
 import infinuma.android.shows.networking.responses.Show
 import infinuma.android.shows.networking.responses.User
 import infinuma.android.shows.databinding.DialogProfileSettingsBinding
@@ -37,6 +37,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import android.app.Application
+import infinuma.android.shows.data.model.db_shows.ShowDB
 
 private const val BASE_URL = "https://tv-shows.infinum.academy/"
 
@@ -44,7 +46,9 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
 
     private var _binding: FragmentShowsBinding? = null
     private lateinit var adapter: ShowsAdapter
-    private val viewModel by viewModels<ShowsViewModel>()
+    private val viewModel: ShowsViewModel by viewModels{
+        ShowViewModelFactory((requireActivity().application as ShowApplication).database)
+    }
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var user: User
 
@@ -69,7 +73,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewModel = ViewModelProvider(this, ShowsViewModelFactory(sharedPreferences))[ShowsViewModel::class.java]
+        //val viewModel = ViewModelProvider(this, ShowsViewModelFactory())[ShowsViewModel::class.java]
         val email = ""
         val userId = ""
         val accessToken = ""
@@ -253,8 +257,8 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         )
         adapter = ShowsAdapter(emptyList()) { show ->
             val destination = ShowsFragmentDirections.actionShowsFragmentToShowDetailsFragment(
-                showId = show.id,
-                showName = show.title
+                //showId = show.id,
+                //showName = show.title
             )
             findNavController().navigate(destination)
         }
@@ -262,12 +266,12 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
 
     }
 
-    private fun setupAdapter(showsList: List<Show>) {
+    private fun setupAdapter(showsList: List<ShowDB>) {
         adapter.updateData(showsList)
     }
 
     private fun observeShowsLiveData() {
-        viewModel.showsLiveData.observe(viewLifecycleOwner) { showsList ->
+        viewModel.showsDBLiveData.observe(viewLifecycleOwner) { showsList ->
             Log.d("ShowsFragment", "Received showsLiveData with data: $showsList")
             setupAdapter(showsList)
         }
@@ -279,11 +283,11 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     }
 }
 
-class ShowsViewModelFactory(private val sharedPreferences: SharedPreferences) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ShowsViewModel::class.java)) {
-            return ShowsViewModel(sharedPreferences) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
+//class ShowsViewModelFactory() : ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(ShowsViewModel::class.java)) {
+//            return ShowsViewModel() as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}
