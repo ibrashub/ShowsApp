@@ -10,11 +10,11 @@ import infinuma.android.shows.data.model.db_reviews.ReviewEntity
 
 class ShowApplication : Application() {
 
-    private val databaseShow by lazy {
+     val databaseShow by lazy {
         ShowDatabase.getDatabase(this)
     }
 
-    private val databaseReview by lazy {
+     val databaseReview by lazy {
         ReviewDatabase.getDatabase(this)
     }
 
@@ -40,7 +40,7 @@ class ShowApplication : Application() {
         super.onCreate()
         GlobalScope.launch {
 
-            databaseShow.showDao().insertAllShows(shows)
+            databaseShow.showDao().insertAllShows(shows = shows)
             databaseReview.reviewDao().insertAllReviews(reviews = reviews)
         }
     }

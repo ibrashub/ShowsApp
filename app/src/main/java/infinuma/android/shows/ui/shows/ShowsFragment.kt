@@ -47,7 +47,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     private var _binding: FragmentShowsBinding? = null
     private lateinit var adapter: ShowsAdapter
     private val viewModel: ShowsViewModel by viewModels{
-        ShowViewModelFactory((requireActivity().application as ShowApplication).database)
+        ShowViewModelFactory((requireActivity().application as ShowApplication).databaseShow)
     }
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var user: User
