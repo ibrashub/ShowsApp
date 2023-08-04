@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import infinuma.android.shows.data.model.db_reviews.ReviewDatabase
+import infinuma.android.shows.data.model.db_shows.ShowDatabase
 import infinuma.android.shows.networking.responses.Review
 import infinuma.android.shows.networking.requests.ReviewRequest
 import infinuma.android.shows.networking.responses.ReviewResponse
@@ -12,7 +14,7 @@ import infinuma.android.shows.networking.responses.ShowDetails
 import infinuma.android.shows.networking.ApiModule
 import kotlinx.coroutines.launch
 
-class ShowDetailsViewModel : ViewModel() {
+class ShowDetailsViewModel(val database: ReviewDatabase) : ViewModel() {
 
     private val _descriptionLiveData = MutableLiveData<String>()
     val descriptionLiveData: LiveData<String> = _descriptionLiveData

@@ -1,4 +1,4 @@
-package infinuma.android.shows.data.model.db_shows
+package infinuma.android.shows.data.model.db_reviews
 
 import android.content.Context
 import androidx.room.Database
@@ -7,23 +7,23 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        ShowEntity::class
+        ReviewEntity::class
     ],
     version = 1
 )
-abstract class ShowDatabase : RoomDatabase() {
+abstract class ReviewDatabase : RoomDatabase() {
 
     companion object {
 
         @Volatile
-        private var INSTANCE: ShowDatabase? = null
+        private var INSTANCE: ReviewDatabase? = null
 
-        fun getDatabase(context: Context): ShowDatabase {
+        fun getDatabase(context: Context): ReviewDatabase {
             return INSTANCE ?: synchronized(this) {
                 val database = Room.databaseBuilder(
                     context = context,
-                    klass = ShowDatabase::class.java,
-                    name = "show_db"
+                    klass = ReviewDatabase::class.java,
+                    name = "review_db"
                 )
                     .fallbackToDestructiveMigration()
                     .build()
@@ -32,5 +32,5 @@ abstract class ShowDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun showDao(): ShowDao
+    abstract fun reviewDao(): ReviewDao
 }
