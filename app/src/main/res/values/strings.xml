@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Shows</string>
     <string name="email">Email</string>
+    <string name="email_exists_error">Email already exists.</string>
     <string name="password">Password</string>
     <string name="username">username</string>
     <string name="login">Login</string>
@@ -30,6 +31,8 @@
     <string name="logout_confirmation_title">Logout confirmation</string>
     <string name="logout_confirmation_message">Are you sure you want to log out?</string>
     <string name="user_email">user_email</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_password">Invalid password</string>
     <string name="default_email">default@email.com</string>
     <string name="change_photo">Change photo</string>
     <string name="change_photo_dialog_title">Select Image</string>
@@ -39,8 +42,14 @@
     <string name="ratings_average">%d ratings, %.2f average</string>
     <string name="provide_rating_error">Please provide a rating.</string>
     <string name="remember_me_checkbox">rememberMeCheckbox</string>
-
-
+    <string name="register">Register</string>
+    <string name="registration_successful">Registration\nSuccessful!</string>
+    <string name="registration_failed">Registration failed!</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="invalid_login">Invalid login credentials. Please try again.</string>
+    <string name="try_again">Try again</string>
+    <string name="auth_error">Authentication data missing or invalid. Please log in again.</string>
+    <string name="regex_pattern">[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,4}</string>
 
 
 </resources>

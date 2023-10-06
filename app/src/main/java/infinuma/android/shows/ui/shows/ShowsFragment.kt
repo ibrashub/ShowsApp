@@ -16,18 +16,29 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import infinuma.android.shows.FileUtil
 import infinuma.android.shows.R
-import infinuma.android.shows.data.model.Show
-import infinuma.android.shows.data.model.ShowsViewModel
+import infinuma.android.shows.networking.responses.Show
+import infinuma.android.shows.networking.responses.User
 import infinuma.android.shows.databinding.DialogProfileSettingsBinding
 import infinuma.android.shows.databinding.FragmentShowsBinding
+import infinuma.android.shows.networking.FileUploadService
 import infinuma.android.shows.ui.login.PREFERENCE_SHOW
 import infinuma.android.shows.ui.login.REMEMBER_ME
 import infinuma.android.shows.ui.login.USER_EMAIL
 import java.io.File
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+private const val BASE_URL = "https://tv-shows.infinum.academy/"
 
 class ShowsFragment : Fragment(R.layout.fragment_shows) {
 
@@ -35,13 +46,19 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     private lateinit var adapter: ShowsAdapter
     private val viewModel by viewModels<ShowsViewModel>()
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var sharedPreferences2: SharedPreferences
+    private lateinit var user: User
+
     private val binding get() = _binding!!
+
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreferences = requireContext().getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
-        sharedPreferences2 = requireContext().getSharedPreferences(PREFERENCE_SHOW, Context.MODE_PRIVATE)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,6 +69,14 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val viewModel = ViewModelProvider(this, ShowsViewModelFactory(sharedPreferences))[ShowsViewModel::class.java]
+        val email = ""
+        val userId = ""
+        val accessToken = ""
+        val client = ""
+        val imageUrl = ""
+        user = User(userId, email = email, accessToken = accessToken, client = client, imageUrl = imageUrl)
+        viewModel.setCurrentUser(user = user)
         binding.showsProfilePhoto.setOnClickListener {
             showProfileBottomSheetDialog()
         }
@@ -77,7 +102,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         val dialog = BottomSheetDialog(requireContext())
         val binding = DialogProfileSettingsBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
-        val imageUriString = sharedPreferences2.getString(PREFERENCE_SHOW, null)
+        val imageUriString = sharedPreferences.getString(PREFERENCE_SHOW, null)
         val userEmail =
             sharedPreferences.getString(USER_EMAIL, R.string.default_email.toString()) ?: USER_EMAIL
 
@@ -116,12 +141,12 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
                 .setPositiveButton(R.string.yes) { dialog, _ ->
                     sharedPreferences.edit {
                         remove(USER_EMAIL)
-                        remove(PREFERENCE_SHOW)
-                        putBoolean(REMEMBER_ME, false)
-
                     }
-                    sharedPreferences2.edit {
+                    sharedPreferences.edit {
                         remove(PREFERENCE_SHOW)
+                    }
+                    sharedPreferences.edit {
+                        remove(REMEMBER_ME)
                     }
                     findNavController().navigate(R.id.action_showsFragment_to_loginFragment)
                     dialog.dismiss()
@@ -139,10 +164,15 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         uri?.let {
             val resizedImageFile = FileUtil.resizeAndSaveImage(requireContext(), uri)
             binding.showsProfilePhoto.setImageURI(uri)
-
-            sharedPreferences2.edit {
+            viewModel.onProfilePhotoSelected(uri)
+            sharedPreferences.edit {
                 putString(PREFERENCE_SHOW, resizedImageFile?.absolutePath)
             }
+            val photoFile = File(resizedImageFile?.path)
+            val requestFile = photoFile.asRequestBody("image/*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData("file", photoFile.name, requestFile)
+
+            uploadPhotoToServer(body)
         }
     }
 
@@ -153,9 +183,33 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
             latestTmpUri?.let { uri ->
                 val resizedImageFile = FileUtil.resizeAndSaveImage(requireContext(), uri)
                 binding.showsProfilePhoto.setImageURI(uri)
-                sharedPreferences2.edit {
+                viewModel.onProfilePhotoSelected(uri)
+                sharedPreferences.edit {
                     putString(PREFERENCE_SHOW, resizedImageFile?.absolutePath)
                 }
+                val photoFile = File(resizedImageFile?.path)
+                val requestFile = photoFile.asRequestBody("image/*".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData("file", photoFile.name, requestFile)
+
+                uploadPhotoToServer(body)
+            }
+        }
+    }
+
+    private fun uploadPhotoToServer(body: MultipartBody.Part) {
+        val fileUploadService = retrofit.create(FileUploadService::class.java)
+        lifecycleScope.launchWhenStarted {
+            try {
+                val response = fileUploadService.uploadPhoto(body)
+                if (response.isSuccessful) {
+                    val photoUploadResponse = response.body()
+                    val photoUrl = photoUploadResponse?.user?.imageUrl
+                    //sharedPreferences.
+                } else {
+                    Log.e("File Upload", "Upload failed. Response code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("File Upload", "Error uploading file: ${e.message}")
             }
         }
     }
@@ -185,7 +239,7 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     }
 
     private fun setProfileImage() {
-        val imageFilePath = sharedPreferences2.getString(PREFERENCE_SHOW, null)
+        val imageFilePath = sharedPreferences.getString(PREFERENCE_SHOW, null)
         if (imageFilePath != null) {
             val imageUri = Uri.fromFile(File(imageFilePath))
             binding.showsProfilePhoto.setImageURI(imageUri)
@@ -197,23 +251,24 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         binding.showsRecycler.addItemDecoration(
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         )
-    }
-
-    private fun setupAdapter(showsList: List<Show>) {
-        adapter = ShowsAdapter(showsList) { show ->
+        adapter = ShowsAdapter(emptyList()) { show ->
             val destination = ShowsFragmentDirections.actionShowsFragmentToShowDetailsFragment(
                 showId = show.id,
-                showName = show.name,
-                showDescription = show.description,
-                showImage = show.imageResourceId
+                showName = show.title
             )
             findNavController().navigate(destination)
         }
         binding.showsRecycler.adapter = adapter
+
+    }
+
+    private fun setupAdapter(showsList: List<Show>) {
+        adapter.updateData(showsList)
     }
 
     private fun observeShowsLiveData() {
         viewModel.showsLiveData.observe(viewLifecycleOwner) { showsList ->
+            Log.d("ShowsFragment", "Received showsLiveData with data: $showsList")
             setupAdapter(showsList)
         }
     }
@@ -221,5 +276,14 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+class ShowsViewModelFactory(private val sharedPreferences: SharedPreferences) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ShowsViewModel::class.java)) {
+            return ShowsViewModel(sharedPreferences) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
