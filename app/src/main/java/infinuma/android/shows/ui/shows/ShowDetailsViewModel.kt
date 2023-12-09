@@ -90,9 +90,11 @@ class ShowDetailsViewModel : ViewModel() {
                 val response = createReview(rating, comment, showId)
                 if (response.isSuccessful) {
                     val reviewResponse = response.body()
-                    reviewResponse?.let {
-                        _reviewCreateResponseLiveData.value = it
-                    }
+                    fetchReviews(showId)
+                    fetchShowDetails(showId)
+//                    reviewResponse?.let {
+//                        _reviewCreateResponseLiveData.value = it
+//                    }
                 } else {
                     Log.e("ViewModel", "Error creating review. Response code: ${response.code()}")
                 }

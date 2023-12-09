@@ -3,6 +3,8 @@ package infinuma.android.shows.ui.login
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import infinuma.android.shows.R
 import infinuma.android.shows.networking.responses.Review
 import infinuma.android.shows.databinding.ItemReviewBinding
 
@@ -32,7 +34,11 @@ class ReviewsAdapter(
             binding.username.text = review.user.email
             binding.userComment.text = review.comment
             binding.starAmount.text = review.rating.toString()
-
+            Glide.with(binding.userImage)
+                .load(review.user.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.image_error)
+                .into(binding.userImage)
 
         }
     }

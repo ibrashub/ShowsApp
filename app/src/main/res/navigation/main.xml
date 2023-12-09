@@ -29,6 +29,10 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/registerFragment"
             app:popUpToInclusive="true"/>
+        <argument
+            android:name="registrationSuccess"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
     </fragment>
 
@@ -36,10 +40,7 @@
         android:id="@+id/showsFragment"
         android:name="infinuma.android.shows.ui.shows.ShowsFragment"
         tools:layout="@layout/fragment_shows">
-        <argument
-            android:name="registrationSuccess"
-            android:defaultValue="false"
-            app:argType="boolean" />
+
         <action android:id="@+id/action_showsFragment_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment"/>
         <action android:id="@+id/action_showsFragment_to_loginFragment"
